@@ -1,0 +1,26 @@
+{
+  "name": "crowntownops",
+  "version": "1.0.0",
+  "description": "For drivers on their daily pick-up routes",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmion/crowntownops.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rmion/crowntownops/issues"
+  },
+  "homepage": "https://github.com/rmion/crowntownops#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "bulma": "^0.7.5",
+    "express": "^4.17.1",
+    "mongodb": "^3.3.2"
+  }
+}
