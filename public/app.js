@@ -32,8 +32,7 @@
         return this.stops ? this.stops[this.counter] : null;
       },
       dayOfWeek() {
-        //   return this.days[new Date().getDay()];
-          return "Monday";
+          return this.days[new Date().getDay()];
       }
     },
     mounted() {
