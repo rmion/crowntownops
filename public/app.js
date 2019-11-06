@@ -73,9 +73,9 @@
             let isBiWeekly = Boolean(stop["Bi-Weekly"]);
             let skip = Boolean(stop["Skip"]);
           
-            if (isBiWeekly && (today - last > 7) && !skip) {
+            if (isBiWeekly && (today - last > 7) && (last !== today) && !skip) {
               this.allMarkers.push(L.marker([Number(stop.Latitude), Number(stop.Longitude)]))
-            } else if (!isBiWeekly && !skip) {
+            } else if (!isBiWeekly && !skip && (last !== today)) {
               this.allMarkers.push(L.marker([Number(stop.Latitude), Number(stop.Longitude)]))
             }
         },
