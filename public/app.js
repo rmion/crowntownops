@@ -72,10 +72,11 @@
             let last = Math.floor(new Date(stop["Recent Pick-up"]).getTime() / (1000 * 3600 * 24));
             let isBiWeekly = Boolean(stop["Bi-Weekly"]);
             let skip = Boolean(stop["Skip"]);
+            let completed = new Date().toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
-            if (isBiWeekly && (today - last > 7) && (last !== today) && !skip) {
+            if (isBiWeekly && (today - last > 7) && !completed && !skip) {
               this.allMarkers.push(L.marker([Number(stop.Latitude), Number(stop.Longitude)]))
-            } else if (!isBiWeekly && !skip && (last !== today)) {
+            } else if (!isBiWeekly && !skip && !completed) {
               this.allMarkers.push(L.marker([Number(stop.Latitude), Number(stop.Longitude)]))
             }
         },
