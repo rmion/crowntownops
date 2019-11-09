@@ -25,7 +25,8 @@
       placesList: [],
       allMarkers: [],
       todaysStops: null,
-      days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],    
+      days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      currentCoords: [35.27078,-80.74005],
     },
     computed: {
       currentStop() {
@@ -39,6 +40,20 @@
         this.fetchGSheetData();
     },
     methods: {
+        setLocation(bool) {
+          if (bool) {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(this.updatePosition);
+            }  
+          } else {
+            this.currentCoords = [35.27078,-80.74005];
+          }
+        },
+        updatePosition(position) {
+          if (position) {
+            this.currentCoords = [position.coords.latitude, position.coords.longitude]
+          }
+        },
         fetchGSheetData() {
             if (localStorage.getItem('destinations') && JSON.parse(localStorage.getItem('destinations')).updated === new Date().toLocaleDateString()) {
                 this.addMapMarkers(JSON.parse(localStorage.getItem('destinations')).destinations)
@@ -109,6 +124,27 @@
                 this.stops[this.counter].completed = true;
             })
       },
+      flagAddress() {
+        let username = 'l79dssqs';
+        let password = 'cuirv5acqfj6zspxw5c6';
+        let headers = new Headers();
+        this.setLocation(true)
+
+        headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+        headers.append('Content-Type', 'application/json');
+        
+        fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/Email/${this.currentStop.Email}`, {
+                headers: headers,
+                method: "PATCH",
+                body: JSON.stringify({"data":[{ "Notes": `Flagged address: ${this.currentCoords}` }]})
+            })
+            .then(response => response.json())
+            .then(data => {
+                this.stopsRemaining -= 1;
+                this.stops[this.counter].flagged = true;
+            })
+
+      },
       initializeRoute(waypoints) {
         this.stops = waypoints;
         this.isRouteLoading = false;
@@ -120,7 +156,7 @@
           this.initializeRoute(JSON.parse(localStorage.getItem('route')).waypoints)
         } else {
           const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
-          const start = `&start=geo!35.27078,-80.74005`
+          const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
           const end = `&end=geo!35.27078,-80.74005`
           var destinations = "";
           var counter = 0;
@@ -141,6 +177,7 @@
                 return stop.Latitude == coords.lat && stop.Longitude == coords.lng
               });
               match.completed = false;
+              match.flagged = false;
               return match;
             })
             localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.placesList }));
