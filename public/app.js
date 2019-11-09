@@ -26,7 +26,7 @@
       allMarkers: [],
       todaysStops: null,
       days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      currentCoords: [35.27078,-80.74005],
+      currentCoords: [35.27078,-80.74005], // Warehouse on Orr Rd
     },
     computed: {
       currentStop() {
@@ -84,14 +84,16 @@
           },
         checkStopForRouteInclusion(stop) {
             let today = Math.floor(new Date().getTime() / (1000 * 3600 * 24));
-            let last = Math.floor(new Date(stop["Recent Pick-up"]).getTime() / (1000 * 3600 * 24));
+            let last = stop["Recent Pick-up"] ? Math.floor(new Date(stop["Recent Pick-up"]).getTime() / (1000 * 3600 * 24)) : 0;
+            let hasBeenOverAWeek = today - last > 7;
             let isBiWeekly = Boolean(stop["Bi-Weekly"]);
             let skip = Boolean(stop["Skip"]);
             let completed = new Date().toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
-            if (isBiWeekly && (today - last > 7) && !completed && !skip) {
-              this.allMarkers.push(L.marker([Number(stop.Latitude), Number(stop.Longitude)]))
-            } else if (!isBiWeekly && !skip && !completed) {
+            if ( 
+              ( (isBiWeekly && hasBeenOverAWeek) || !isBiWeekly ) 
+              && !completed && !skip && stop.Latitude && stop.Longitude 
+            ) {
               this.allMarkers.push(L.marker([Number(stop.Latitude), Number(stop.Longitude)]))
             }
         },
