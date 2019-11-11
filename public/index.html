@@ -38,7 +38,7 @@
             <button class="button is-medium is-dark" @click="setLocation(false)" :class="{ 'is-primary': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005, 'is-selected': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005 }">From Warehouse</button>
             <button class="button is-medium is-dark" @click="setLocation(true)"  :class="{ 'is-primary': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005, 'is-selected': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005 }">From Here</button>
           </div>
-          <button class="block button is-link is-large is-fullwidth" v-if="isDataLoaded && !isRouteLoaded" @click="calculateRoute" :disabled="isRouteLoading || stopsRemaining == 0">{{isRouteLoading ? "Loading...may take a min." : "Start today's route"}}</button>
+          <button class="block button is-link is-large is-fullwidth" v-if="isDataLoaded && !isRouteLoaded && stopsRemaining" @click="calculateRoute" :disabled="isRouteLoading || stopsRemaining == 0">{{isRouteLoading ? "Loading...may take a min." : "Start today's route"}}</button>
           <div v-if="stops">
             <progress class="progress is-primary" :value="counter / stops.length * 100" max="100">{{counter / stops.length * 100}}%</progress>
             <div class="buttons has-addons is-centered block">

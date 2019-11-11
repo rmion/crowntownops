@@ -159,14 +159,14 @@
         } else {
           const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
           const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
-          const end = `&end=geo!35.27078,-80.74005`
+          // const end = `&end=geo!35.27078,-80.74005`
           var destinations = "";
           var counter = 0;
           this.todaysStops.getLayers().forEach(layer => {
             destinations += `&destination${counter}=geo!${layer._latlng.lat},${layer._latlng.lng}`;
             counter++;
           })
-          this.apiRequestURI = service + start + destinations + end;
+          this.apiRequestURI = service + start + destinations;
           this.isRouteLoading = true;
           fetch(this.apiRequestURI)
             .then((response) => response.json())
