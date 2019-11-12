@@ -39,14 +39,19 @@
             <button class="button is-medium is-dark" @click="setLocation(true)"  :class="{ 'is-primary': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005, 'is-selected': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005 }">From Here</button>
           </div>
           <button class="block button is-link is-large is-fullwidth" v-if="isDataLoaded && !isRouteLoaded && stopsRemaining" @click="calculateRoute" :disabled="isRouteLoading || stopsRemaining == 0">{{isRouteLoading ? "Loading...may take a min." : "Start today's route"}}</button>
-          <div v-if="stops">
+          <div v-if="stops.length && counter !== stops.length">
             <progress class="progress is-primary" :value="counter / stops.length * 100" max="100">{{counter / stops.length * 100}}%</progress>
+            <article class="message is-success" v-if="stopsRemaining == 0">
+              <div class="message-body">
+                You completed all of today's stops!
+              </div>
+            </article>
             <div class="buttons has-addons is-centered block">
               <button class="button is-white is-inverted is-large" @click="showNextStop(-1)">
                 Back
               </button>
               <button class="button is-white is-inverted is-large" @click="showNextStop(1)">
-                Next
+                {{ counter == stops.length - 1 ? "Finish" : "Next" }}
               </button>
             </div>  
             <article class="panel has-background-white">

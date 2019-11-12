@@ -15,14 +15,13 @@
   var app = new Vue({
     el: "#app",
     data: {
-      stops: null,
+      stops: [],
       stopsRemaining: null,
       counter: 0,
       isRouteLoading: false,
       isRouteLoaded: false,
       isDataLoaded: false,
       apiRequestURI: "",
-      placesList: [],
       allMarkers: [],
       todaysStops: null,
       days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -102,6 +101,8 @@
           return;
         } else if (this.counter + num < 0) {
           return;
+        } else if (this.counter == this.stops.length - 1) {
+          this.counter += num;
         } else {
           this.counter += num;
           map.setView([this.stops[this.counter].Latitude, this.stops[this.counter].Longitude], 14)
@@ -172,9 +173,9 @@
             .then((response) => response.json())
             .then((data) => {
             data.results[0].waypoints.forEach(stop => {
-              this.placesList.push({ lat: stop.lat, lng: stop.lng })
+              this.stops.push({ lat: stop.lat, lng: stop.lng })
             })
-            this.placesList = this.placesList.slice(1).map((coords) => {
+            this.stops = this.stops.slice(1).map((coords) => {
               var match = JSON.parse(localStorage.getItem('destinations')).destinations.find((stop) => {
                 return stop.Latitude == coords.lat && stop.Longitude == coords.lng
               });
@@ -182,8 +183,8 @@
               match.flagged = false;
               return match;
             })
-            localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.placesList }));
-            app.initializeRoute(this.placesList)
+            localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
+            app.initializeRoute(this.stops)
           })
         }
       }
