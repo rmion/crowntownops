@@ -119,7 +119,14 @@
         fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/Email/${this.currentStop.Email}`, {
                 headers: headers,
                 method: "PATCH",
-                body: JSON.stringify({"data":[{ "Recent Pick-up": new Date().toLocaleDateString() }]})
+                body: JSON.stringify({
+                  "data": [
+                    { 
+                      "Recent Pick-up": new Date().toLocaleDateString(),
+                      "Notes": this.currentStop.newNotes ? this.currentStop.Notes + " **" + this.currentStop.newNotes + "**" : this.currentStop.Notes
+                    }
+                  ]
+                })
             })
             .then(response => response.json())
             .then(data => {
@@ -181,6 +188,7 @@
               });
               match.completed = false;
               match.flagged = false;
+              match.newNote = "";
               return match;
             })
             localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));

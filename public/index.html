@@ -82,8 +82,13 @@
                 {{currentStop.Address}}
               </a>
               <div class="panel-block">
+                <p class="control">
+                  <input class="input" type="text" v-model="currentStop.newNote" placeholder="Add a short note">
+                </p>
+              </div>
+              <div class="panel-block">
                 <button class="button is-primary is-large is-fullwidth" :disabled="currentStop.completed" @click="markCompletedStop">
-                  {{  currentStop.completed ? "Pick-up recorded!" : "Mark as complete"  }}
+                  {{  currentStop.completed ? "Pick-up recorded!" : "Record stop and note"  }}
                 </button>
               </div>
               <div class="panel-block">
