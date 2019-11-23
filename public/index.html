@@ -29,7 +29,7 @@
             </a>
             <div class="navbar-item">
               <a class="button is-danger" onclick="localStorage.removeItem('destinations');localStorage.removeItem('route');window.location.reload();">
-                <strong>Refresh app</strong>
+                <strong>Reset</strong>
               </a>
             </div>
           </div>
@@ -38,7 +38,7 @@
     <div class="section">
       <div class="container block">
         <div id="app" class="block">
-          <article class="message is-warning" v-if="window.location.protocol !== 'https://'">
+          <article class="message is-warning" v-if="!isSecureConnection">
             <div class="message-body">
               <a href="https://crowntownops.herokuapp.com">Switch to a secure connection to let this app use your current location</a>
             </div>

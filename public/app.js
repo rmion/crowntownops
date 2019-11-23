@@ -18,6 +18,7 @@
       stops: [],
       stopsRemaining: null,
       counter: 0,
+      isSecureConnection: window.location.protocol == 'https://',
       isRouteLoading: false,
       isRouteLoaded: false,
       isDataLoaded: false,
