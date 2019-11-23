@@ -27,12 +27,22 @@
             <a href="handbook.html" class="navbar-item">
                 Handbook
             </a>
+            <div class="navbar-item">
+              <a class="button is-danger" onclick="localStorage.removeItem('destinations');localStorage.removeItem('route');window.location.reload();">
+                <strong>Refresh app</strong>
+              </a>
+            </div>
           </div>
         </nav>
         
     <div class="section">
       <div class="container block">
         <div id="app" class="block">
+          <article class="message is-warning" v-if="window.location.protocol !== 'https://'">
+            <div class="message-body">
+              <a href="https://crowntownops.herokuapp.com">Switch to a secure connection to let this app use your current location</a>
+            </div>
+          </article>
           <h1 class="title is-2 has-text-white has-text-centered">{{stopsRemaining}} stops today</h1>
           <div class="buttons has-addons is-centered" v-if="!isRouteLoaded">
             <button class="button is-medium is-dark" @click="setLocation(false)" :class="{ 'is-primary': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005, 'is-selected': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005 }">From Warehouse</button>
