@@ -151,7 +151,6 @@
             })
             .then(response => response.json())
             .then(data => {
-                this.stopsRemaining -= 1;
                 this.stops[this.counter].flagged = true;
             })
 
@@ -168,7 +167,6 @@
         } else {
           const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
           const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
-          // const end = `&end=geo!35.27078,-80.74005`
           var destinations = "";
           var counter = 0;
           this.todaysStops.getLayers().forEach(layer => {
@@ -180,21 +178,21 @@
           fetch(this.apiRequestURI)
             .then((response) => response.json())
             .then((data) => {
-            data.results[0].waypoints.forEach(stop => {
-              this.stops.push({ lat: stop.lat, lng: stop.lng })
+              data.results[0].waypoints.forEach(stop => {
+                this.stops.push({ lat: stop.lat, lng: stop.lng })
+              })
+              this.stops = this.stops.slice(1).map((coords) => {
+                var match = JSON.parse(localStorage.getItem('destinations')).destinations.find((stop) => {
+                  return stop.Latitude == coords.lat && stop.Longitude == coords.lng
+                });
+                match.completed = false;
+                match.flagged = false;
+                match.newNote = "";
+                return match;
+              })
+              localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
+              app.initializeRoute(this.stops)
             })
-            this.stops = this.stops.slice(1).map((coords) => {
-              var match = JSON.parse(localStorage.getItem('destinations')).destinations.find((stop) => {
-                return stop.Latitude == coords.lat && stop.Longitude == coords.lng
-              });
-              match.completed = false;
-              match.flagged = false;
-              match.newNote = "";
-              return match;
-            })
-            localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
-            app.initializeRoute(this.stops)
-          })
         }
       }
     }
