@@ -98,6 +98,7 @@
             }
         },
       showNextStop(num) {
+        localStorage.setItem('stopNumber', this.counter)
         if (this.counter == this.stops.length) {
           return;
         } else if (this.counter + num < 0) {
@@ -159,6 +160,9 @@
         this.stops = waypoints;
         this.isRouteLoading = false;
         this.isRouteLoaded = true;
+        if (localStorage.getItem('stopNumber')) {
+          this.counter = Number(localStorage.getItem('stopNumber'))
+        }
         map.setView([this.stops[this.counter].Latitude, this.stops[this.counter].Longitude], 14)
       },
       calculateRoute() {
