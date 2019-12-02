@@ -160,7 +160,7 @@
         this.stops = waypoints;
         this.isRouteLoading = false;
         this.isRouteLoaded = true;
-        if (localStorage.getItem('stopNumber')) {
+        if (localStorage.getItem('stopNumber') && localStorage.getItem('route') && JSON.parse(localStorage.getItem('route')).updated === new Date().toLocaleDateString()) {
           this.counter = Number(localStorage.getItem('stopNumber'))
         }
         map.setView([this.stops[this.counter].Latitude, this.stops[this.counter].Longitude], 14)
