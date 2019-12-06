@@ -156,18 +156,18 @@
             })
 
       },
-      initializeRoute(waypoints) {
+      initializeRoute(waypoints, isCached) {
         this.stops = waypoints;
         this.isRouteLoading = false;
         this.isRouteLoaded = true;
-        if (localStorage.getItem('stopNumber') && localStorage.getItem('route') && JSON.parse(localStorage.getItem('route')).updated === new Date().toLocaleDateString()) {
+        if (localStorage.getItem('stopNumber') && isCached) {
           this.counter = Number(localStorage.getItem('stopNumber'))
         }
         map.setView([this.stops[this.counter].Latitude, this.stops[this.counter].Longitude], 14)
       },
       calculateRoute() {
         if (localStorage.getItem('route') && JSON.parse(localStorage.getItem('route')).updated === new Date().toLocaleDateString()) {
-          this.initializeRoute(JSON.parse(localStorage.getItem('route')).waypoints)
+          this.initializeRoute(JSON.parse(localStorage.getItem('route')).waypoints, true)
         } else {
           const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
           const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
@@ -195,7 +195,7 @@
                 return match;
               })
               localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
-              app.initializeRoute(this.stops)
+              app.initializeRoute(this.stops, false)
             })
         }
       }
