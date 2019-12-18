@@ -33,7 +33,15 @@
         return this.stops ? this.stops[this.counter] : null;
       },
       dayOfWeek() {
-          return this.days[new Date().getDay()];
+        // return this.days[new Date().getDay()];
+        return "Thursday";
+      },
+      newStops() {
+        if (localStorage.getItem('destinations')) {
+          return JSON.parse(localStorage.getItem('destinations')).destinations.filter((stop) => stop["Recent Pick-up"] === "").length;
+        } else {
+          return null;
+        }
       }
     },
     mounted() {
