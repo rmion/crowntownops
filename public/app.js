@@ -36,7 +36,7 @@
         return this.days[new Date().getDay()];
       },
       newStops() {
-        if (localStorage.getItem('destinations')) {
+        if (localStorage.getItem('destinations') && JSON.parse(localStorage.getItem('destinations')).updated === new Date().toLocaleDateString()) {
           return JSON.parse(localStorage.getItem('destinations')).destinations.filter((stop) => stop["Recent Pick-up"] === "").length;
         } else {
           return null;
