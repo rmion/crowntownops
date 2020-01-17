@@ -15,6 +15,7 @@
   var app = new Vue({
     el: "#app",
     data: {
+      sheetsDBPayload: null,
       stops: [],
       stopsRemaining: null,
       counter: 0,
@@ -36,15 +37,15 @@
         return this.days[new Date().getDay()];
       },
       newStops() {
-        if (localStorage.getItem('destinations') && JSON.parse(localStorage.getItem('destinations')).updated === new Date().toLocaleDateString()) {
-          return JSON.parse(localStorage.getItem('destinations')).destinations.filter((stop) => stop["Recent Pick-up"] === "").length;
+        if (this.sheetsDBPayload) {
+          return this.sheetsDBPayload.filter((row) => row["Recent Pick-up"] == "").length;
         } else {
           return null;
         }
       }
     },
     mounted() {
-        this.fetchGSheetData();
+      this.fetchGSheetData();
     },
     methods: {
         setLocation(bool) {
@@ -63,7 +64,8 @@
         },
         fetchGSheetData() {
             if (localStorage.getItem('destinations') && JSON.parse(localStorage.getItem('destinations')).updated === new Date().toLocaleDateString()) {
-                this.addMapMarkers(JSON.parse(localStorage.getItem('destinations')).destinations)
+              this.sheetsDBPayload = JSON.parse(localStorage.getItem('destinations')).destinations;
+              this.hydrateApp(JSON.parse(localStorage.getItem('destinations')).destinations)
             } else {
                 let username = 'l79dssqs';
                 let password = 'cuirv5acqfj6zspxw5c6';
@@ -76,13 +78,15 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        this.sheetsDBPayload = data;
                         localStorage.setItem('destinations', JSON.stringify({ updated: new Date().toLocaleDateString(), destinations: data }));
-                        this.addMapMarkers(data)
+                        this.hydrateApp(data)
                     })
             }
         },
-        addMapMarkers(rows) {
-            rows.forEach((row) => this.checkStopForRouteInclusion(row))
+        hydrateApp(rows) {
+            rows.filter((row) => this.checkStopForRouteInclusion(row))
+                .forEach((row) => this.allMarkers.push(L.marker([Number(row.Latitude), Number(row.Longitude)])))
             this.stopsRemaining = this.allMarkers.length;
             this.todaysStops = L.layerGroup(this.allMarkers);
             L.control.layers(null, { "Today": this.todaysStops }).addTo(map)
@@ -92,16 +96,20 @@
         checkStopForRouteInclusion(stop) {
             let today = Math.floor(new Date().getTime() / (1000 * 3600 * 24));
             let last = stop["Recent Pick-up"] ? Math.floor(new Date(stop["Recent Pick-up"]).getTime() / (1000 * 3600 * 24)) : 0;
+            let isNewCustomer = stop["Recent Pick-up"] == "";
             let hasBeenOverAWeek = today - last > 7;
+            let isAnOffWeek = (today - last) >= 14 && (today - last) % 14 !== 0;
             let isBiWeekly = Boolean(stop["Bi-Weekly"]);
             let skip = Boolean(stop["Skip"]);
             let completed = new Date().toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
             if ( 
-              ( (isBiWeekly && hasBeenOverAWeek) || !isBiWeekly ) 
+              ( (isBiWeekly && hasBeenOverAWeek && !isAnOffWeek) || !isBiWeekly || isNewCustomer ) 
               && !completed && !skip && stop.Latitude && stop.Longitude 
             ) {
-              this.allMarkers.push(L.marker([Number(stop.Latitude), Number(stop.Longitude)]))
+              return true;
+            } else {
+              return false;
             }
         },
       showNextStop(num) {
@@ -132,7 +140,7 @@
                   "data": [
                     { 
                       "Recent Pick-up": new Date().toLocaleDateString(),
-                      "Notes": this.currentStop.newNotes ? this.currentStop.Notes + " **" + this.currentStop.newNotes + "**" : this.currentStop.Notes
+                      "Notes": this.currentStop.Notes
                     }
                   ]
                 })
@@ -178,13 +186,14 @@
         } else {
           const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
           const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
+          const end = `&end=geo!35.27078,-80.74005`
           var destinations = "";
           var counter = 0;
           this.todaysStops.getLayers().forEach(layer => {
             destinations += `&destination${counter}=geo!${layer._latlng.lat},${layer._latlng.lng}`;
             counter++;
           })
-          this.apiRequestURI = service + start + destinations;
+          this.apiRequestURI = service + start + destinations + end;
           this.isRouteLoading = true;
           fetch(this.apiRequestURI)
             .then((response) => response.json())
@@ -192,13 +201,12 @@
               data.results[0].waypoints.forEach(stop => {
                 this.stops.push({ lat: stop.lat, lng: stop.lng })
               })
-              this.stops = this.stops.slice(1).map((coords) => {
+              this.stops = this.stops.slice(1, this.stops.length - 1).map((coords) => {
                 var match = JSON.parse(localStorage.getItem('destinations')).destinations.find((stop) => {
                   return stop.Latitude == coords.lat && stop.Longitude == coords.lng
                 });
                 match.completed = false;
                 match.flagged = false;
-                match.newNote = "";
                 return match;
               })
               localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));

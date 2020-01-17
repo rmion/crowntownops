@@ -44,7 +44,7 @@
             </div>
           </article>
           <h1 class="title is-2 has-text-white has-text-centered">{{stopsRemaining}} stops today</h1>
-          <h2 v-if="newStops && newStops > 0" class="has-text-centered has-text-white subtitle is-4"><span class="tag is-danger">{{newStops}}</span> new buckets needed</h2>
+          <h2 v-if="newStops && newStops > 0" class="has-text-centered has-text-white subtitle is-4"><span class="tag is-warning">{{newStops}}</span> new buckets needed</h2>
           <div class="buttons has-addons is-centered" v-if="!isRouteLoaded">
             <button class="button is-medium is-dark" @click="setLocation(false)" :class="{ 'is-primary': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005, 'is-selected': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005 }">From Warehouse</button>
             <button class="button is-medium is-dark" @click="setLocation(true)"  :class="{ 'is-primary': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005, 'is-selected': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005 }">From Here</button>
@@ -80,6 +80,12 @@
                 </span>
                 {{currentStop["Bin Location"]}}
               </a>
+              <a class="panel-block is-active" v-if="currentStop['How to Access']">
+                <span class="panel-icon">
+                    <i class="fas fa-key" aria-hidden="true"></i>
+                </span>
+                {{currentStop["How to Access"]}}
+              </a>
               <a class="panel-block">
                 <span class="panel-icon">
                     <i class="fas fa-phone" aria-hidden="true"></i>
@@ -92,15 +98,9 @@
                 </span>
                 {{currentStop.Address}}
               </a>
-              <a class="panel-block" v-if="currentStop.Notes">
-                <span class="panel-icon">
-                  <i class="fas fa-sticky-note" aria-hidden="true"></i>
-                </span>
-                {{currentStop.Notes}}
-              </a>
               <div class="panel-block">
                 <p class="control">
-                  <input class="input" type="text" v-model="currentStop.newNote" placeholder="Add a short note">
+                  <input class="input" type="text" v-model="currentStop.Notes" placeholder="Add a short note">
                 </p>
               </div>
               <div class="panel-block">
