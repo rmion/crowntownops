@@ -26,22 +26,11 @@
       apiRequestURI: "",
       allMarkers: [],
       todaysStops: null,
-      days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       currentCoords: [35.27078,-80.74005], // Warehouse on Orr Rd
     },
     computed: {
       currentStop() {
         return this.stops ? this.stops[this.counter] : null;
-      },
-      dayOfWeek() {
-        return this.days[new Date().getDay()];
-      },
-      newStops() {
-        if (this.sheetsDBPayload) {
-          return this.sheetsDBPayload.filter((row) => row["Recent Pick-up"] == "").length;
-        } else {
-          return null;
-        }
       }
     },
     mounted() {
@@ -63,9 +52,9 @@
           }
         },
         fetchGSheetData() {
-            if (localStorage.getItem('destinations') && JSON.parse(localStorage.getItem('destinations')).updated === new Date().toLocaleDateString()) {
-              this.sheetsDBPayload = JSON.parse(localStorage.getItem('destinations')).destinations;
-              this.hydrateApp(JSON.parse(localStorage.getItem('destinations')).destinations)
+            if (localStorage.getItem('pilot') && JSON.parse(localStorage.getItem('pilot')).updated === new Date().toLocaleDateString()) {
+              this.sheetsDBPayload = JSON.parse(localStorage.getItem('pilot')).destinations;
+              this.hydrateApp(JSON.parse(localStorage.getItem('pilot')).destinations)
             } else {
                 let username = 'l79dssqs';
                 let password = 'cuirv5acqfj6zspxw5c6';
@@ -73,46 +62,25 @@
         
                 headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
                 
-                fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/search?Service%20Day=${this.dayOfWeek}`, {
+                fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/search?Pilot=Y`, {
                         headers: headers
                     })
                     .then(response => response.json())
                     .then(data => {
                         this.sheetsDBPayload = data;
-                        localStorage.setItem('destinations', JSON.stringify({ updated: new Date().toLocaleDateString(), destinations: data }));
+                        localStorage.setItem('pilot', JSON.stringify({ updated: new Date().toLocaleDateString(), destinations: data }));
                         this.hydrateApp(data)
                     })
             }
         },
         hydrateApp(rows) {
-            rows.filter((row) => this.checkStopForRouteInclusion(row))
-                .forEach((row) => this.allMarkers.push(L.marker([Number(row.Latitude), Number(row.Longitude)])))
+            rows.forEach((row) => this.allMarkers.push(L.marker([Number(row.Latitude), Number(row.Longitude)])))
             this.stopsRemaining = this.allMarkers.length;
             this.todaysStops = L.layerGroup(this.allMarkers);
             L.control.layers(null, { "Today": this.todaysStops }).addTo(map)
             this.todaysStops.addTo(map);
             this.isDataLoaded = true;
           },
-        checkStopForRouteInclusion(stop) {
-            let today = Math.floor(new Date().getTime() / (1000 * 3600 * 24));
-            let last = stop["Recent Pick-up"] ? Math.floor(new Date(stop["Recent Pick-up"]).getTime() / (1000 * 3600 * 24)) : 0;
-            let isNewCustomer = stop["Recent Pick-up"] == "";
-            let hasBeenOverAWeek = today - last > 7;
-            let isAnOffWeek = (today - last) >= 14 && (today - last) % 14 !== 0;
-            let isBiWeekly = Boolean(stop["Bi-Weekly"]);
-            let isInPilot = stop["Pilot"] == "Y";
-            let skip = Boolean(stop["Skip"]);
-            let completed = new Date().toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
-          
-            if ( 
-              ( (isBiWeekly && hasBeenOverAWeek && !isAnOffWeek) || !isBiWeekly || isNewCustomer ) 
-              && !completed && !skip && !isInPilot && stop.Latitude && stop.Longitude 
-            ) {
-              return true;
-            } else {
-              return false;
-            }
-        },
       showNextStop(num) {
         localStorage.setItem('stopNumber', this.counter)
         if (this.counter == this.stops.length) {
@@ -182,8 +150,8 @@
         map.setView([this.stops[this.counter].Latitude, this.stops[this.counter].Longitude], 14)
       },
       calculateRoute() {
-        if (localStorage.getItem('pilotRoute') && JSON.parse(localStorage.getItem('pilotRoute')).updated === new Date().toLocaleDateString()) {
-          this.initializeRoute(JSON.parse(localStorage.getItem('pilotRoute')).waypoints, true)
+        if (localStorage.getItem('route') && JSON.parse(localStorage.getItem('route')).updated === new Date().toLocaleDateString()) {
+          this.initializeRoute(JSON.parse(localStorage.getItem('route')).waypoints, true)
         } else {
           const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
           const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
@@ -203,14 +171,14 @@
                 this.stops.push({ lat: stop.lat, lng: stop.lng })
               })
               this.stops = this.stops.slice(1, this.stops.length - 1).map((coords) => {
-                var match = JSON.parse(localStorage.getItem('destinations')).destinations.find((stop) => {
+                var match = JSON.parse(localStorage.getItem('pilot')).destinations.find((stop) => {
                   return stop.Latitude == coords.lat && stop.Longitude == coords.lng
                 });
                 match.completed = false;
                 match.flagged = false;
                 return match;
               })
-              localStorage.setItem('pilotRoute', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
+              localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
               app.initializeRoute(this.stops, false)
             })
         }
