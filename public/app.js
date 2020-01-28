@@ -100,13 +100,13 @@
             let hasBeenOverAWeek = today - last > 7;
             let isAnOffWeek = (today - last) >= 14 && (today - last) % 14 !== 0;
             let isBiWeekly = Boolean(stop["Bi-Weekly"]);
-            let isInPilot = stop["Pilot"] == "Y";
+            // let isInPilot = stop["Pilot"] == "Y";
             let skip = Boolean(stop["Skip"]);
             let completed = new Date().toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
             if ( 
               ( (isBiWeekly && hasBeenOverAWeek && !isAnOffWeek) || !isBiWeekly || isNewCustomer ) 
-              && !completed && !skip && !isInPilot && stop.Latitude && stop.Longitude 
+              && !completed && !skip && stop.Latitude && stop.Longitude 
             ) {
               return true;
             } else {
