@@ -99,14 +99,14 @@
             let isNewCustomer = stop["Recent Pick-up"] == "";
             let hasBeenOverAWeek = today - last > 7;
             let isAnOffWeek = (today - last) >= 14 && (today - last) % 14 !== 0;
-            let isBiWeekly = Boolean(stop["Bi-Weekly"]);
-            // let isInPilot = stop["Pilot"] == "Y";
+            let isBiWeekly = stop["Bi-Weekly"] == "Y";
+            let isInPilot = stop["Pilot"] == "Y";
             let skip = Boolean(stop["Skip"]);
             let completed = new Date().toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
             if ( 
               ( (isBiWeekly && hasBeenOverAWeek && !isAnOffWeek) || !isBiWeekly || isNewCustomer ) 
-              && !completed && !skip && stop.Latitude && stop.Longitude 
+              && !completed && !skip && !isInPilot && stop.Latitude && stop.Longitude 
             ) {
               return true;
             } else {
@@ -182,8 +182,8 @@
         map.setView([this.stops[this.counter].Latitude, this.stops[this.counter].Longitude], 14)
       },
       calculateRoute() {
-        if (localStorage.getItem('pilotRoute') && JSON.parse(localStorage.getItem('pilotRoute')).updated === new Date().toLocaleDateString()) {
-          this.initializeRoute(JSON.parse(localStorage.getItem('pilotRoute')).waypoints, true)
+        if (localStorage.getItem('route') && JSON.parse(localStorage.getItem('route')).updated === new Date().toLocaleDateString()) {
+          this.initializeRoute(JSON.parse(localStorage.getItem('route')).waypoints, true)
         } else {
           const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
           const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
@@ -210,7 +210,7 @@
                 match.flagged = false;
                 return match;
               })
-              localStorage.setItem('pilotRoute', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
+              localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
               app.initializeRoute(this.stops, false)
             })
         }
