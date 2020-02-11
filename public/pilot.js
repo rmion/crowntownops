@@ -67,6 +67,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        data = data.filter(row => row.Skip !== "Y").filter(row => row["Recent Pick-up"] !== new Date().toLocaleDateString());
                         this.sheetsDBPayload = data;
                         localStorage.setItem('pilot', JSON.stringify({ updated: new Date().toLocaleDateString(), destinations: data }));
                         this.hydrateApp(data)
