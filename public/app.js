@@ -26,7 +26,7 @@
       apiRequestURI: "",
       allMarkers: [],
       todaysStops: null,
-      days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      TODAY: new Date(),
       currentCoords: [35.27078,-80.74005], // Warehouse on Orr Rd
     },
     computed: {
@@ -34,7 +34,7 @@
         return this.stops ? this.stops[this.counter] : null;
       },
       dayOfWeek() {
-        return this.days[new Date().getDay()];
+        return new Intl.DateTimeFormat('en-US', {weekday: 'long'}).format(this.TODAY)
       },
       newStops() {
         if (this.sheetsDBPayload) {
@@ -63,7 +63,7 @@
           }
         },
         fetchGSheetData() {
-            if (localStorage.getItem('destinations') && JSON.parse(localStorage.getItem('destinations')).updated === new Date().toLocaleDateString()) {
+            if (localStorage.getItem('destinations') && JSON.parse(localStorage.getItem('destinations')).updated === this.TODAY.toLocaleDateString()) {
               this.sheetsDBPayload = JSON.parse(localStorage.getItem('destinations')).destinations;
               this.hydrateApp(JSON.parse(localStorage.getItem('destinations')).destinations)
             } else {
@@ -79,7 +79,7 @@
                     .then(response => response.json())
                     .then(data => {
                         this.sheetsDBPayload = data;
-                        localStorage.setItem('destinations', JSON.stringify({ updated: new Date().toLocaleDateString(), destinations: data }));
+                        localStorage.setItem('destinations', JSON.stringify({ updated: this.TODAY.toLocaleDateString(), destinations: data }));
                         this.hydrateApp(data)
                     })
             }
@@ -94,18 +94,22 @@
             this.isDataLoaded = true;
           },
         checkStopForRouteInclusion(stop) {
-            let today = Math.floor(new Date().getTime() / (1000 * 3600 * 24));
-            let last = stop["Recent Pick-up"] ? Math.floor(new Date(stop["Recent Pick-up"]).getTime() / (1000 * 3600 * 24)) : 0;
-            let isNewCustomer = stop["Recent Pick-up"] == "";
-            let hasBeenOverAWeek = today - last > 7;
-            let isAnOffWeek = (today - last) >= 14 && (today - last) % 14 !== 0;
+            let biWeeklySchedule = {
+              "Monday": 1,
+              "Tuesday": 0,
+              "Thursday": 0,
+              "Friday": 0
+            }
+
+            let isCorrectWeek = biWeeklySchedule[this.dayOfWeek] == Math.floor(this.TODAY.getTime() / (1000 * 60 * 60 * 24 * 7)) % 2
+
             let isBiWeekly = stop["Bi-Weekly"] == "Y";
             let isInPilot = stop["Pilot"] == "Y";
-            let skip = Boolean(stop["Skip"]);
-            let completed = new Date().toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
+            let skip = stop["Skip"] == "Y";
+            let completed = this.TODAY.toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
             if ( 
-              ( (isBiWeekly && hasBeenOverAWeek && !isAnOffWeek) || !isBiWeekly || isNewCustomer ) 
+              ( (isBiWeekly && isCorrectWeek) || !isBiWeekly ) 
               && !completed && !skip && !isInPilot && stop.Latitude && stop.Longitude 
             ) {
               return true;
@@ -127,6 +131,7 @@
         }
       },
       markCompletedStop() {
+        this.stops[this.counter].isSaving = true;
         let username = 'l79dssqs';
         let password = 'cuirv5acqfj6zspxw5c6';
         let headers = new Headers();
@@ -140,7 +145,7 @@
                 body: JSON.stringify({
                   "data": [
                     { 
-                      "Recent Pick-up": new Date().toLocaleDateString(),
+                      "Recent Pick-up": this.TODAY.toLocaleDateString(),
                       "Notes": this.currentStop.Notes
                     }
                   ]
@@ -148,6 +153,7 @@
             })
             .then(response => response.json())
             .then(data => {
+              this.stops[this.counter].isSaving = false;
                 this.stopsRemaining -= 1;
                 this.stops[this.counter].completed = true;
             })
@@ -182,7 +188,7 @@
         map.setView([this.stops[this.counter].Latitude, this.stops[this.counter].Longitude], 14)
       },
       calculateRoute() {
-        if (localStorage.getItem('route') && JSON.parse(localStorage.getItem('route')).updated === new Date().toLocaleDateString()) {
+        if (localStorage.getItem('route') && JSON.parse(localStorage.getItem('route')).updated === this.TODAY.toLocaleDateString()) {
           this.initializeRoute(JSON.parse(localStorage.getItem('route')).waypoints, true)
         } else {
           const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
@@ -208,9 +214,10 @@
                 });
                 match.completed = false;
                 match.flagged = false;
+                match.isSaving = false;
                 return match;
               })
-              localStorage.setItem('route', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
+              localStorage.setItem('route', JSON.stringify({ updated: this.TODAY.toLocaleDateString(), waypoints: this.stops }));
               app.initializeRoute(this.stops, false)
             })
         }

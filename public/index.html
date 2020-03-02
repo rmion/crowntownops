@@ -8,6 +8,7 @@
     integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
     crossorigin=""/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <link rel="stylesheet" href="styles.css">
     <style>
       #map { height: 30vh; }
     </style>
@@ -62,44 +63,66 @@
               <a href="https://crowntownops.herokuapp.com">Switch to a secure connection to let this app use your current location</a>
             </div>
           </article>
-          <h1 class="title is-2 has-text-white has-text-centered">{{stopsRemaining}} stops today</h1>
-          <h2 v-if="newStops && newStops > 0" class="has-text-centered has-text-white subtitle is-4"><span class="tag is-warning">{{newStops}}</span> new buckets needed</h2>
+          <h1 class="title is-2 has-text-white has-text-centered">{{stopsRemaining}} stops {{dayOfWeek}}</h1>
+          <h2 v-if="newStops && newStops > 0" class="has-text-centered has-text-white subtitle is-4"><strong><span class="tag is-danger">{{newStops}}</span></strong> new buckets needed</h2>
           <div class="buttons has-addons is-centered" v-if="!isRouteLoaded">
             <button class="button is-medium is-dark" @click="setLocation(false)" :class="{ 'is-primary': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005, 'is-selected': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005 }">From Warehouse</button>
             <button class="button is-medium is-dark" @click="setLocation(true)"  :class="{ 'is-primary': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005, 'is-selected': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005 }">From Here</button>
           </div>
           <button class="block button is-link is-large is-fullwidth" v-if="isDataLoaded && !isRouteLoaded && stopsRemaining" @click="calculateRoute" :disabled="isRouteLoading || stopsRemaining == 0">{{isRouteLoading ? "Loading...may take a min." : "Start today's route"}}</button>
           <div v-if="stops.length && counter !== stops.length">
-            <progress class="progress is-primary" :value="counter / stops.length * 100" max="100">{{counter / stops.length * 100}}%</progress>
-            <article class="message is-success" v-if="stopsRemaining == 0">
+            <!-- <progress class="progress is-primary" :value="counter / stops.length * 100" max="100">{{counter / stops.length * 100}}%</progress> -->
+            <!-- <article class="message is-success" v-if="stopsRemaining == 0">
               <div class="message-body">
                 You completed all of today's stops!
               </div>
-            </article>
-            <div class="buttons has-addons is-centered block">
-              <button class="button is-white is-inverted is-large" @click="showNextStop(-1)">
-                Back
+            </article> -->
+            <div class="block" style="display: flex;">
+              <button class="button" @click="showNextStop(-1)">
+                <i class="fas fa-chevron-left"></i>
               </button>
-              <button class="button is-white is-inverted is-large" @click="showNextStop(1)">
-                {{ counter == stops.length - 1 ? "Finish" : "Next" }}
+              <input type="range" style="flex-grow: 1; margin-left: 10px; margin-right: 10px;" class="slider" v-model.number="counter" min="0" :max="stops.length - 1" step="1"/>
+              <button class="button" @click="showNextStop(1)">
+                <i class="fas fa-chevron-right"></i>
               </button>
-            </div>  
+            </div>
+
+            <div class="block has-text-centered">
+              <a :href="'tel:+1' + currentStop.Phone" class="button is-warning">
+                <i class="fas fa-phone"></i>
+              </a>
+              <a :href="'https://www.google.com/maps/dir/?api=1&destination=' +  + currentStop.Latitude + ',' + currentStop.Longitude" class="button is-link is-large">
+                <i class="fas fa-map-marker-alt fa-lg"></i>
+              </a>
+              <button class="button is-primary is-large" :class="{ 'is-loading': currentStop.isSaving }" @click="markCompletedStop">
+                <i class="fas fa-save fa-lg"></i>
+              </button>
+              <button class="button is-danger" :disabled="currentStop.flagged" @click="flagAddress">
+                <i class="fas fa-flag"></i>
+              </button>
+            </div>
             <article class="panel has-background-white">
               <p class="panel-heading">
-                  <span v-if="currentStop['Recent Pick-up'] == ''" class="tag is-danger">NEW&nbsp</span>{{currentStop.Name}}
+                  <span v-if="currentStop['Recent Pick-up'] == ''" class="tag is-danger">NEW</span>&nbsp;{{currentStop.Name}}
               </p>
-              <div class="panel-block">
+              <!-- <div class="panel-block">
                 <a :href="'https://www.google.com/maps/dir/?api=1&destination=' +  + currentStop.Latitude + ',' + currentStop.Longitude" class="button is-link is-fullwidth">
                   Get directions
                 </a>
-              </div>            
-              <a class="panel-block is-active">
+              </div> -->
+              <a class="panel-block">
+                <span class="panel-icon">
+                  <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                </span>
+                {{currentStop.Address}}
+              </a>
+              <a class="panel-block">
                 <span class="panel-icon">
                     <i class="fas fa-trash" aria-hidden="true"></i>
                 </span>
                 {{currentStop["Bin Location"]}}
               </a>
-              <a class="panel-block is-active" v-if="currentStop['How to Access']">
+              <a class="panel-block" v-if="currentStop['How to Access']">
                 <span class="panel-icon">
                     <i class="fas fa-key" aria-hidden="true"></i>
                 </span>
@@ -111,27 +134,21 @@
                 </span>
                 {{currentStop.Phone}}
               </a>
-              <a class="panel-block">
-                <span class="panel-icon">
-                  <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                </span>
-                {{currentStop.Address}}
-              </a>
               <div class="panel-block">
                 <p class="control">
                   <input class="input" type="text" v-model="currentStop.Notes" placeholder="Add a short note">
                 </p>
               </div>
-              <div class="panel-block">
+              <!-- <div class="panel-block">
                 <button class="button is-primary is-large is-fullwidth" :disabled="currentStop.completed" @click="markCompletedStop">
                   {{  currentStop.completed ? "Pick-up recorded!" : "Record stop and note"  }}
                 </button>
-              </div>
-              <div class="panel-block">
+              </div> -->
+              <!-- <div class="panel-block">
                 <button class="button is-danger is-outlined is-fullwidth" :disabled="currentStop.flagged" @click="flagAddress">
                   {{  currentStop.flagged ? "Address flagged!" : "Flag this address" }}
                 </button>
-              </div>
+              </div> -->
             </article>
           </div>
         </div>      
