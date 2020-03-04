@@ -71,12 +71,6 @@
           </div>
           <button class="block button is-link is-large is-fullwidth" v-if="isDataLoaded && !isRouteLoaded && stopsRemaining" @click="calculateRoute" :disabled="isRouteLoading || stopsRemaining == 0">{{isRouteLoading ? "Loading...may take a min." : "Start today's route"}}</button>
           <div v-if="stops.length && counter !== stops.length">
-            <!-- <progress class="progress is-primary" :value="counter / stops.length * 100" max="100">{{counter / stops.length * 100}}%</progress> -->
-            <!-- <article class="message is-success" v-if="stopsRemaining == 0">
-              <div class="message-body">
-                You completed all of today's stops!
-              </div>
-            </article> -->
             <div class="block" style="display: flex;">
               <button class="button" @click="showNextStop(-1)">
                 <i class="fas fa-chevron-left"></i>
@@ -95,7 +89,7 @@
                 <i class="fas fa-map-marker-alt fa-lg"></i>
               </a>
               <button class="button is-primary is-large" :class="{ 'is-loading': currentStop.isSaving }" @click="markCompletedStop">
-                <i class="fas fa-save fa-lg"></i>
+                <i class="fas fa-check fa-lg"></i>
               </button>
               <button class="button is-danger" :disabled="currentStop.flagged" @click="flagAddress">
                 <i class="fas fa-flag"></i>
@@ -103,13 +97,10 @@
             </div>
             <article class="panel has-background-white">
               <p class="panel-heading">
-                  <span v-if="currentStop['Recent Pick-up'] == ''" class="tag is-danger">NEW</span>&nbsp;{{currentStop.Name}}
+                  <span v-if="currentStop['Recent Pick-up'] == ''" class="tag is-danger">NEW</span>
+                  <span v-else-if="currentStop.completed" class="tag is-primary">SAVED</span>
+                  &nbsp;{{currentStop.Name}}
               </p>
-              <!-- <div class="panel-block">
-                <a :href="'https://www.google.com/maps/dir/?api=1&destination=' +  + currentStop.Latitude + ',' + currentStop.Longitude" class="button is-link is-fullwidth">
-                  Get directions
-                </a>
-              </div> -->
               <a class="panel-block">
                 <span class="panel-icon">
                   <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
@@ -139,16 +130,6 @@
                   <input class="input" type="text" v-model="currentStop.Notes" placeholder="Add a short note">
                 </p>
               </div>
-              <!-- <div class="panel-block">
-                <button class="button is-primary is-large is-fullwidth" :disabled="currentStop.completed" @click="markCompletedStop">
-                  {{  currentStop.completed ? "Pick-up recorded!" : "Record stop and note"  }}
-                </button>
-              </div> -->
-              <!-- <div class="panel-block">
-                <button class="button is-danger is-outlined is-fullwidth" :disabled="currentStop.flagged" @click="flagAddress">
-                  {{  currentStop.flagged ? "Address flagged!" : "Flag this address" }}
-                </button>
-              </div> -->
             </article>
           </div>
         </div>      

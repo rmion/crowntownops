@@ -15,9 +15,10 @@
   var app = new Vue({
     el: "#app",
     data: {
-      sheetsDBPayload: null,
+      sheetsDBPayload: [],
       stops: [],
-      stopsRemaining: null,
+      stopsRemaining: 0,
+      stopsCompleted: [],
       counter: 0,
       isSecureConnection: window.location.protocol == 'https:',
       isRouteLoading: false,
@@ -37,7 +38,7 @@
         return new Intl.DateTimeFormat('en-US', {weekday: 'long'}).format(this.TODAY)
       },
       newStops() {
-        if (this.sheetsDBPayload) {
+        if (this.sheetsDBPayload.length) {
           return this.sheetsDBPayload.filter((row) => row["Recent Pick-up"] == "").length;
         } else {
           return null;
@@ -73,14 +74,14 @@
         
                 headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
                 
-                fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/search?Service%20Day=${this.dayOfWeek}`, {
+                fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/search?Service-Day=${this.dayOfWeek}`, {
                         headers: headers
                     })
                     .then(response => response.json())
                     .then(data => {
                         this.sheetsDBPayload = data;
                         localStorage.setItem('destinations', JSON.stringify({ updated: this.TODAY.toLocaleDateString(), destinations: data }));
-                        this.hydrateApp(data)
+                        this.hydrateApp(this.sheetsDBPayload)
                     })
             }
         },
@@ -154,7 +155,10 @@
             .then(response => response.json())
             .then(data => {
               this.stops[this.counter].isSaving = false;
+              if (this.stopsCompleted.indexOf(this.stops[this.counter].Phone) == -1) {
                 this.stopsRemaining -= 1;
+                this.stopsCompleted.push(this.stops[this.counter].Phone)
+              }
                 this.stops[this.counter].completed = true;
             })
       },
