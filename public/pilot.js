@@ -15,9 +15,10 @@
   var app = new Vue({
     el: "#app",
     data: {
-      sheetsDBPayload: null,
+      sheetsDBPayload: [],
       stops: [],
-      stopsRemaining: null,
+      stopsRemaining: 0,
+      stopsCompleted: [],
       counter: 0,
       isSecureConnection: window.location.protocol == 'https:',
       isRouteLoading: false,
@@ -96,6 +97,7 @@
         }
       },
       markCompletedStop() {
+        this.stops[this.counter].isSaving = true;
         let username = 'l79dssqs';
         let password = 'cuirv5acqfj6zspxw5c6';
         let headers = new Headers();
@@ -117,7 +119,11 @@
             })
             .then(response => response.json())
             .then(data => {
+              this.stops[this.counter].isSaving = false;
+              if (this.stopsCompleted.indexOf(this.stops[this.counter].Phone) == -1) {
                 this.stopsRemaining -= 1;
+                this.stopsCompleted.push(this.stops[this.counter].Phone)
+              }
                 this.stops[this.counter].completed = true;
             })
       },
@@ -177,6 +183,7 @@
                 });
                 match.completed = false;
                 match.flagged = false;
+                match.isSaving = false;
                 return match;
               })
               localStorage.setItem('pilotRoute', JSON.stringify({ updated: new Date().toLocaleDateString(), waypoints: this.stops }));
