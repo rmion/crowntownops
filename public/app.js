@@ -106,12 +106,13 @@
 
             let isBiWeekly = stop["Bi-Weekly"] == "Y";
             let isInPilot = stop["Pilot"] == "Y";
+            let isActive = stop["Status"] == "Active";
             let skip = stop["Skip"] == "Y";
             let completed = this.TODAY.toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
             if ( 
               ( (isBiWeekly && isCorrectWeek) || !isBiWeekly ) 
-              && !completed && !skip && !isInPilot && stop.Latitude && stop.Longitude 
+              && !completed && !skip && isActive && !isInPilot && stop.Latitude && stop.Longitude 
             ) {
               return true;
             } else {
