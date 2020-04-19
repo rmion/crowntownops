@@ -53,6 +53,9 @@
       this.fetchGSheetData();
     },
     methods: {
+        startHalfway() {
+          this.counter = Math.floor(this.stops.length / 2)
+        },
         setLocation(bool) {
           if (bool) {
             if (navigator.geolocation) {
@@ -231,7 +234,7 @@
               adminClient.query(
                 q.Create(
                   q.Collection(this.dayOfWeek),
-                  { data: { timestamp: this.TODAY.toLocaleDateString(), route: this.stops.map(stop => {
+                  { data: { timestamp: this.TODAY.toLocaleString(), route: this.stops.map(stop => {
                     return {
                       address: stop.Address,
                       lat: stop.Latitude,

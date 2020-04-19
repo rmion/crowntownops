@@ -72,6 +72,17 @@
           </div>
           <button class="block button is-link is-large is-fullwidth" v-if="isDataLoaded && !isRouteLoaded && stopsRemaining" @click="calculateRoute" :disabled="isRouteLoading || stopsRemaining == 0">{{isRouteLoading ? "Loading...may take a min." : "Start today's route"}}</button>
           <div v-if="stops.length && counter !== stops.length">
+            <div class="block has-text-centered">
+              <button class="button" @click="counter = stops.findIndex(stop => stop.completed == false)">
+                <i class="fas fa-fast-backward"></i>
+              </button>
+              <button class="button" @click="startHalfway">
+                <i class="fas fa-forward"></i>
+              </button>
+              <a class="button" href="https://www.google.com/maps/dir/?api=1&destination=35.27078,-80.74005">
+                <i class="fas fa-truck-loading"></i>
+              </a>
+            </div>
             <div class="block" style="display: flex;">
               <button class="button" @click="showNextStop(-1)">
                 <i class="fas fa-chevron-left"></i>
@@ -81,7 +92,6 @@
                 <i class="fas fa-chevron-right"></i>
               </button>
             </div>
-
             <div class="block has-text-centered">
               <a :href="'tel:+1' + currentStop.Phone" class="button is-warning">
                 <i class="fas fa-phone"></i>
