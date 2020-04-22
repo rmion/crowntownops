@@ -220,7 +220,7 @@
               data.results[0].waypoints.forEach(stop => {
                 this.stops.push({ lat: stop.lat, lng: stop.lng })
               })
-              this.stops = this.stops.slice(1, this.stops.length - 1).map((coords) => {
+              this.stops = this.stops.slice(1, this.stops.length).map((coords) => {
                 var match = JSON.parse(localStorage.getItem('destinations')).destinations.find((stop) => {
                   return stop.Latitude == coords.lat && stop.Longitude == coords.lng
                 });
