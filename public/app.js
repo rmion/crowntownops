@@ -217,9 +217,11 @@
           fetch(this.apiRequestURI)
             .then((response) => response.json())
             .then((data) => {
+              console.log("Route API payload: ", data.results[0].waypoints);
               data.results[0].waypoints.forEach(stop => {
                 this.stops.push({ lat: stop.lat, lng: stop.lng })
               })
+              console.log("Before slicing ", this.stops);
               this.stops = this.stops.slice(1, this.stops.length).map((coords) => {
                 var match = JSON.parse(localStorage.getItem('destinations')).destinations.find((stop) => {
                   return stop.Latitude == coords.lat && stop.Longitude == coords.lng
@@ -230,6 +232,7 @@
                 return match;
               })
               localStorage.setItem('route', JSON.stringify({ updated: this.TODAY.toLocaleDateString(), waypoints: this.stops }));
+              console.log("After slicing ", this.stops);
               app.initializeRoute(this.stops, false)
               adminClient.query(
                 q.Create(
