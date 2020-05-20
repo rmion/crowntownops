@@ -106,7 +106,8 @@
               "Monday": 1,
               "Tuesday": 0,
               "Thursday": 0,
-              "Friday": 0
+              "Friday": 0,
+              "Wednesday": 1,
             }
 
             let isCorrectWeek = biWeeklySchedule[this.dayOfWeek] == Math.floor(this.TODAY.getTime() / (1000 * 60 * 60 * 24 * 7)) % 2
