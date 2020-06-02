@@ -216,9 +216,8 @@
           this.apiRequestURI = service + start + destinations;
           this.isRouteLoading = true;
           fetch(this.apiRequestURI, {
-              method: "GET",
               headers: {
-                'Access-Control-Allow-Origin': 'no-cors'
+                'Access-Control-Allow-Origin': '*',
               }
             })
             .then((response) => response.json())
