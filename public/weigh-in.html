@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CTC - End-of-day Weign-in</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <title>Weigh-in</title>
+</head>
+<body class="has-background-dark">
+    <nav class="navbar has-background-light" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://crowntowncompost.com">
+            <img src="https://static1.squarespace.com/static/535d6ce2e4b0faf2733ec3fe/t/54d951d7e4b05a1e7369644b/1571337216662/" width="28">
+          </a>
+          <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+        <div id="navMenu" class="navbar-menu">
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Routes
+            </a>
+
+          <div class="navbar-dropdown">
+            <a class="navbar-item is-active" href="index.html">
+              Today
+            </a>
+            <hr class="navbar-divider">
+            <a class="navbar-item" href="pilot.html">
+              Pilot program
+            </a>
+            <hr class="navbar-divider">
+            <a class="navbar-item" href="weigh-in.html">
+              Weigh-in
+            </a>
+          </div>
+        </div>
+        <a href="handbook.html" class="navbar-item">
+              Handbook
+          </a>
+          <div class="navbar-item">
+            <a class="button is-danger" onclick="localStorage.removeItem('destinations');localStorage.removeItem('route');localStorage.removeItem('stopNumber');window.location.reload();">
+              <strong>Reset</strong>
+            </a>
+          </div>
+        </div>
+      </nav>
+      <div class="section">
+        <div class="container block">
+            <h1 class="title is-2 has-text-centered has-text-white">Weigh-in</h1>
+            <form action="">
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                      <input class="input is-large" type="number" id="weight">
+                    </div>
+                    <div class="control">
+                        <a class="button is-static is-large">
+                          lbs
+                        </a>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-primary is-large is-fullwidth" type="submit" id="record">Record today's weight</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Get all "navbar-burger" elements
+            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+            // Check if there are any navbar burgers
+            if ($navbarBurgers.length > 0) {
+
+                // Add a click event on each of them
+                $navbarBurgers.forEach( el => {
+                    el.addEventListener('click', () => {
+
+                        // Get the target from the "data-target" attribute
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+
+                        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+
+                    });
+                });
+            }
+
+        });
+
+        document.forms[0].addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('record').textContent = 'Saving...';
+            document.getElementById('record').setAttribute('disabled', true);
+            let username = 'l79dssqs';
+            let password = 'cuirv5acqfj6zspxw5c6';
+            let headers = new Headers();
+            headers.append('Content-Type', 'application/json')
+            headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+            fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa?sheet=Daily-Weigh-Ins`,
+                        {
+                            headers: headers,
+                            method: "POST",
+                            body: JSON.stringify({
+                                "data": {
+                                    "Date": new Date().toLocaleDateString(),
+                                    "Weight(lbs)": document.getElementById('weight').value
+                                }
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('record').textContent = 'Success!';
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+
+        })
+    </script>
+  </body>
+</html>
