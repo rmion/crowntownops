@@ -253,6 +253,9 @@
               )
               .then((ret) => console.log(ret))            
             })
+            .catch(err => {
+              console.error(err)
+            })
         }
       }
     }
