@@ -215,7 +215,12 @@
           })
           this.apiRequestURI = service + start + destinations;
           this.isRouteLoading = true;
-          fetch(this.apiRequestURI)
+          fetch(this.apiRequestURI, {
+              method: "GET",
+              headers: {
+                'Access-Control-Allow-Origin': 'no-cors'
+              }
+            })
             .then((response) => response.json())
             .then((data) => {
               console.log("Route API payload: ", data.results[0].waypoints);
