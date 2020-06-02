@@ -215,11 +215,7 @@
           })
           this.apiRequestURI = service + start + destinations;
           this.isRouteLoading = true;
-          fetch(this.apiRequestURI, {
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-              }
-            })
+          fetch(this.apiRequestURI)
             .then((response) => response.json())
             .then((data) => {
               console.log("Route API payload: ", data.results[0].waypoints);
