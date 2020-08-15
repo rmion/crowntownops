@@ -31,7 +31,7 @@
       apiRequestURI: "",
       allMarkers: [],
       todaysStops: null,
-      TODAY: new Date("08-19-2020"),
+      TODAY: new Date(),
       currentCoords: [35.27078,-80.74005], // Warehouse on Orr Rd
     },
     computed: {
