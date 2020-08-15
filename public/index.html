@@ -69,7 +69,10 @@
             </div>
           </article>
           <h1 class="title is-2 has-text-white has-text-centered">{{stopsRemaining}} stops {{dayOfWeek}}</h1>
-          <h2 v-if="newStops && newStops > 0" class="has-text-centered has-text-white subtitle is-4"><strong><span class="tag is-danger">{{newStops}}</span></strong> new buckets needed</h2>
+          <h2 v-if="newStops && newStops > 0" class="has-text-centered has-text-white subtitle is-4">
+            Bring <strong><span class="tag is-danger">{{newStops}}</span></strong> buckets 
+            <span v-if="needsYardSign && needsYardSign > 0">&amp; <strong><span class="tag is-danger">{{needsYardSign}}</span></strong> signs</span>
+          </h2>
           <div class="buttons has-addons is-centered" v-if="!isRouteLoaded">
             <button class="button is-medium is-dark" @click="setLocation(false)" :class="{ 'is-primary': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005, 'is-selected': currentCoords[0] == 35.27078 && currentCoords[1] == -80.74005 }">From Warehouse</button>
             <button class="button is-medium is-dark" @click="setLocation(true)"  :class="{ 'is-primary': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005, 'is-selected': currentCoords[0] !== 35.27078 && currentCoords[1] !== -80.74005 }">From Here</button>
@@ -140,6 +143,18 @@
                 </span>
                 {{currentStop.Phone}}
               </a>
+              <div class="panel-block" v-if="currentStop.Commercial !== null">
+                <div class="field has-addons">
+                  <p class="control">
+                    <input class="input is-medium" v-model="currentStop.weight" type="number" min="0" />
+                  </p>
+                  <p class="control">
+                    <a class="button is-static is-medium">
+                      lbs
+                    </a>
+                  </p>                
+                </div>
+              </div>
               <div class="panel-block">
                 <p class="control">
                   <textarea class="textarea" v-model="currentStop.Notes" placeholder="Add a short note"></textarea>

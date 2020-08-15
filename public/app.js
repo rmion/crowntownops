@@ -31,7 +31,7 @@
       apiRequestURI: "",
       allMarkers: [],
       todaysStops: null,
-      TODAY: new Date(),
+      TODAY: new Date("08-19-2020"),
       currentCoords: [35.27078,-80.74005], // Warehouse on Orr Rd
     },
     computed: {
@@ -44,6 +44,13 @@
       newStops() {
         if (this.sheetsDBPayload.length) {
           return this.sheetsDBPayload.filter((row) => row["Recent Pick-up"] == "").length;
+        } else {
+          return null;
+        }
+      },
+      needsYardSign() {
+        if (this.sheetsDBPayload.length) {
+          return this.sheetsDBPayload.filter((row) => row["Recent Pick-up"] == "" && row["Sign"].indexOf("Yes") == 0).length;
         } else {
           return null;
         }
@@ -114,7 +121,7 @@
 
             let isBiWeekly = stop["Bi-Weekly"] == "Y";
             let isInPilot = stop["Pilot"] == "Y";
-            let isActive = stop["Status"] == "Active";
+            let isActive = stop["Status"].trim() == "Active";
             let skip = stop["Skip"] == "Y";
             let completed = this.TODAY.toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
@@ -168,7 +175,10 @@
                 this.stopsRemaining -= 1;
                 this.stopsCompleted.push(this.stops[this.counter].Phone)
               }
-                this.stops[this.counter].completed = true;
+              this.stops[this.counter].completed = true;
+              if (this.currentStop.Commercial == "Y") {
+                this.recordCommercialBinWeight();
+              }      
             })
       },
       flagAddress() {
@@ -190,6 +200,33 @@
                 this.stops[this.counter].flagged = true;
             })
 
+      },
+      recordCommercialBinWeight() {
+        this.stops[this.counter].isSaving = true;
+        let username = 'l79dssqs';
+        let password = 'cuirv5acqfj6zspxw5c6';
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json')
+        headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+        fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa?sheet=Commercial-Waste`,
+                    {
+                        headers: headers,
+                        method: "POST",
+                        body: JSON.stringify({
+                            "data": {
+                                "Date": new Date().toLocaleDateString(),
+                                "Business": this.currentStop.Name,
+                                "Weight(lbs)": this.currentStop.weight
+                            }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                      this.stops[this.counter].isSaving = false;
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
       },
       initializeRoute(waypoints, isCached) {
         this.stops = waypoints;
@@ -230,6 +267,7 @@
                 match.completed = false;
                 match.flagged = false;
                 match.isSaving = false;
+                match.weight = 0;
                 return match;
               })
               localStorage.setItem('route', JSON.stringify({ updated: this.TODAY.toLocaleDateString(), waypoints: this.stops }));
