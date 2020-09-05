@@ -162,7 +162,7 @@
                 body: JSON.stringify({
                   "data": [
                     { 
-                      "Recent Pick-up": this.TODAY.toLocaleDateString(),
+                      "Recent Pick-up": this.TODAY.toLocaleString(),
                       "Notes": this.currentStop.Notes
                     }
                   ]
@@ -214,7 +214,7 @@
                         method: "POST",
                         body: JSON.stringify({
                             "data": {
-                                "Date": new Date().toLocaleDateString(),
+                                "Date": new Date().toLocaleString(),
                                 "Business": this.currentStop.Name,
                                 "Weight(lbs)": this.currentStop.weight
                             }
