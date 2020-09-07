@@ -162,7 +162,7 @@
                 body: JSON.stringify({
                   "data": [
                     { 
-                      "Recent Pick-up": this.TODAY.toLocaleString(),
+                      "Recent Pick-up": new Date().toLocaleString(),
                       "Notes": this.currentStop.Notes
                     }
                   ]
