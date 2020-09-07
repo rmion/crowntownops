@@ -119,7 +119,7 @@
                   <span v-else-if="currentStop.completed" class="tag is-primary">SAVED</span>
                   &nbsp;{{currentStop.Name}}
               </p>
-              <div class="panel-block" v-if="currentStop.Commercial !== null">
+              <div class="panel-block" v-if="currentStop.Commercial == 'Y'">
                 <div class="field has-addons">
                   <!-- <p class="control">
                     <a class="button is-static is-medium">
