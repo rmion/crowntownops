@@ -51,9 +51,9 @@
       </nav>
       <div class="section" id="app">
         <div class="container">
-            <h1>{{dayOfWeek}}'s route stats</h1>
-            <h2>{{route.length}} stops completed</h2>
-            <table class="table">
+            <h1 class="title is-2 has-text-white has-text-centered">{{dayOfWeek}}'s route stats</h1>
+            <h2 class="subtitle is-2 has-text-white has-text-centered">{{route.length}} stops completed</h2>
+            <table class="table is-fullwidth">
                 <thead>
                     <tr>
                         <th>Stop</th>
@@ -71,6 +71,33 @@
     </div>
     <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Get all "navbar-burger" elements
+            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+            // Check if there are any navbar burgers
+            if ($navbarBurgers.length > 0) {
+
+                // Add a click event on each of them
+                $navbarBurgers.forEach( el => {
+                    el.addEventListener('click', () => {
+
+                        // Get the target from the "data-target" attribute
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+
+                        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+
+                    });
+                });
+            }
+
+        });
+    </script>
+    <script>
         let app = new Vue({
             el: "#app",
             data: {
@@ -78,7 +105,7 @@
                 yesterday: new Date((new Date().getMonth() + 1) + "-" + (new Date().getDate() - 1) + "-" + new Date().getFullYear())
             },
             computed: {
-                dayOfWeek() { 
+                dayOfWeek: function() { 
                     return this.yesterday.toLocaleString('en-us', {  weekday: 'long' })
                 }
             },
