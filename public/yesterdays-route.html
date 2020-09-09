@@ -37,6 +37,9 @@
             <a class="navbar-item" href="weigh-in.html">
               Weigh-in
             </a>
+            <a class="navbar-item" href="yesterdays-route.html">
+              Yesterday's route pick-up times
+            </a>
           </div>
         </div>
         <a href="handbook.html" class="navbar-item">
@@ -126,9 +129,11 @@
                         .then(response => response.json())
                         .then(data => {
                             this.route = data
+                                .sort((a, b) => {
+                                  return new Date(a["Recent Pick-up"]) - new Date(b["Recent Pick-up"])
+                                })
                                 .filter(el => new Date(el["Recent Pick-up"]).getTime() > this.yesterday.getTime())
                                 .map(el => new Date(el["Recent Pick-up"]).toLocaleTimeString())
-                                .sort();
                         })
                 }
             }
