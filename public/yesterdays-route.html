@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Yesteryday's route stats</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+    <title>Weigh-in</title>
+</head>
+<body class="has-background-dark">
+    <nav class="navbar has-background-light" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="https://crowntowncompost.com">
+            <img src="https://static1.squarespace.com/static/535d6ce2e4b0faf2733ec3fe/t/54d951d7e4b05a1e7369644b/1571337216662/" width="28">
+          </a>
+          <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+        <div id="navMenu" class="navbar-menu">
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Routes
+            </a>
+
+          <div class="navbar-dropdown">
+            <a class="navbar-item is-active" href="index.html">
+              Today
+            </a>
+            <hr class="navbar-divider">
+            <a class="navbar-item" href="pilot.html">
+              Pilot program
+            </a>
+            <hr class="navbar-divider">
+            <a class="navbar-item" href="weigh-in.html">
+              Weigh-in
+            </a>
+          </div>
+        </div>
+        <a href="handbook.html" class="navbar-item">
+              Handbook
+          </a>
+          <div class="navbar-item">
+            <a class="button is-danger" onclick="localStorage.removeItem('destinations');localStorage.removeItem('route');localStorage.removeItem('stopNumber');window.location.reload();">
+              <strong>Reset</strong>
+            </a>
+          </div>
+        </div>
+      </nav>
+      <div class="section" id="app">
+        <div class="container">
+            <h1>{{dayOfWeek}}'s route stats</h1>
+            <h2>{{route.length}} stops completed</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Stop</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(key, index) in route">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ key }}</td>
+                    </tr>
+                </tbody>
+            </table>   
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
+    <script>
+        let app = new Vue({
+            el: "#app",
+            data: {
+                route: [],
+                yesterday: new Date((new Date().getMonth() + 1) + "-" + (new Date().getDate() - 1) + "-" + new Date().getFullYear())
+            },
+            computed: {
+                dayOfWeek() { 
+                    this.yesterday.toLocaleString('en-us', {  weekday: 'long' })
+                }
+            },
+            mounted() {
+                this.fetchData();
+            },
+            methods: {
+                fetchData() {
+                    let username = 'l79dssqs';
+                    let password = 'cuirv5acqfj6zspxw5c6';
+                    let headers = new Headers();
+
+                    headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
+                    
+                    fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/search?Service-Day=${this.dayOfWeek}`, {
+                            headers: headers
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            this.route = data
+                                .filter(el => new Date(el["Recent Pick-up"]).getTime() > this.yesterday.getTime())
+                                .map(el => new Date(el["Recent Pick-up"]).toLocaleTimeString())
+                                .sort();
+                        })
+                }
+            }
+        })
+    </script>
+  </body>
+</html>
