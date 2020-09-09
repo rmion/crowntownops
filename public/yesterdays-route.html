@@ -79,7 +79,7 @@
             },
             computed: {
                 dayOfWeek() { 
-                    this.yesterday.toLocaleString('en-us', {  weekday: 'long' })
+                    return this.yesterday.toLocaleString('en-us', {  weekday: 'long' })
                 }
             },
             mounted() {
