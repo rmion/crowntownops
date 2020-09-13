@@ -31,6 +31,7 @@
       apiRequestURI: "",
       allMarkers: [],
       todaysStops: null,
+      estTime: null,
       TODAY: new Date(),
       currentCoords: [35.27078,-80.74005], // Warehouse on Orr Rd
     },
@@ -256,6 +257,22 @@
             .then((response) => response.json())
             .then((data) => {
               console.log("Route API payload: ", data.results[0].waypoints);
+
+              function msToTime(duration) {
+                var milliseconds = parseInt((duration % 1000) / 100),
+                  seconds = Math.floor((duration / 1000) % 60),
+                  minutes = Math.floor((duration / (1000 * 60)) % 60),
+                  hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+              
+                hours = (hours < 10) ? "0" + hours : hours;
+                minutes = (minutes < 10) ? "0" + minutes : minutes;
+                seconds = (seconds < 10) ? "0" + seconds : seconds;
+              
+                return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+              }
+
+              this.estTime = msToTime(Number(data.results[0].time))              
+
               data.results[0].waypoints.forEach(stop => {
                 this.stops.push({ lat: stop.lat, lng: stop.lng })
               })
