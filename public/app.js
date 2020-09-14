@@ -257,6 +257,7 @@
             .then((response) => response.json())
             .then((data) => {
               console.log("Route API payload: ", data.results[0].waypoints);
+              console.log("Estimated route time: ", data.results[0].time);
 
               function msToTime(duration) {
                 var milliseconds = parseInt((duration % 1000) / 100),
