@@ -260,8 +260,7 @@
               console.log("Estimated route time: ", data.results[0].time);
 
               function msToTime(duration) {
-                var milliseconds = parseInt((duration % 1000) / 100),
-                  seconds = Math.floor((duration / 1000) % 60),
+                var seconds = Math.floor((duration / 1000) % 60),
                   minutes = Math.floor((duration / (1000 * 60)) % 60),
                   hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
               
@@ -269,7 +268,7 @@
                 minutes = (minutes < 10) ? "0" + minutes : minutes;
                 seconds = (seconds < 10) ? "0" + seconds : seconds;
               
-                return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+                return hours + "h " + minutes + "m " + seconds + "s";
               }
 
               this.estTime = msToTime(Number(data.results[0].time) * 1000)              
