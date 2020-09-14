@@ -272,7 +272,7 @@
                 return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
               }
 
-              this.estTime = msToTime(Number(data.results[0].time))              
+              this.estTime = msToTime(Number(data.results[0].time) * 1000)              
 
               data.results[0].waypoints.forEach(stop => {
                 this.stops.push({ lat: stop.lat, lng: stop.lng })
