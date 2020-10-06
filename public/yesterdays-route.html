@@ -61,12 +61,14 @@
                     <tr>
                         <th>Stop</th>
                         <th>Time</th>
+                        <th>Name</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(key, index) in route">
                         <td>{{ index + 1 }}</td>
-                        <td>{{ key }}</td>
+                        <td>{{ key.timestamp }}</td>
+                        <td>{{ key.name }}</td>
                     </tr>
                 </tbody>
             </table>   
@@ -133,7 +135,12 @@
                                   return new Date(a["Recent Pick-up"]) - new Date(b["Recent Pick-up"])
                                 })
                                 .filter(el => new Date(el["Recent Pick-up"]).getTime() > this.yesterday.getTime())
-                                .map(el => new Date(el["Recent Pick-up"]).toLocaleTimeString())
+                                .map(el => {
+                                  return {
+                                    timestamp: new Date(el["Recent Pick-up"]).toLocaleTimeString(),
+                                    name: el["Name"]
+                                  }
+                                })
                         })
                 }
             }
