@@ -2,11 +2,13 @@
     renderer: L.canvas()
   })
 
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+  L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     maxZoom: 18,
-    id: 'mapbox.dark',
-    accessToken: 'pk.eyJ1Ijoicm1pb24iLCJhIjoiY2pkdzdnaG9xMXB3ZDJ2bXUzeDJ6d2FoZSJ9.yeDmn8LQpUq-TwM2fKqzCQ'
-  }).addTo(map)
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1Ijoicm9iZXJ0bWlvbiIsImEiOiJjanFlN2cwdXQxdGJjM3hwYml5Nm95dHYwIn0.QvI7FbzeUxHVW93bPWqItw'
+  }).addTo(map);
 
   let q = faunadb.query;
 
