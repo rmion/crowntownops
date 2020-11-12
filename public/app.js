@@ -258,6 +258,7 @@
           fetch(this.apiRequestURI)
             .then((response) => response.json())
             .then((data) => {
+              console.log("Payload: ", data)
               console.log("Route API payload: ", data.results[0].waypoints);
               console.log("Estimated route time: ", data.results[0].time);
 
