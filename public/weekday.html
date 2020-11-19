@@ -36,10 +36,10 @@
               </a>
 
             <div class="navbar-dropdown">
-              <a class="navbar-item is-active" href="index.html">
+              <a class="navbar-item" href="index.html">
                 Today
               </a>
-              <a class="navbar-item" href="weekday.html">
+              <a class="navbar-item is-active" href="weekday.html">
                 Any day
               </a>
               <hr class="navbar-divider">
@@ -74,7 +74,16 @@
               <a href="https://crowntownops.herokuapp.com">Switch to a secure connection to let this app use your current location</a>
             </div>
           </article>
-          <h1 class="title is-2 has-text-white has-text-centered">{{stopsRemaining}} stops {{dayOfWeek}}</h1>
+          <div class="container">
+            <div class="buttons has-addons is-centered">
+              <button @click="fetchGSheetData('Monday')" class="button">Mon</button>
+              <button @click="fetchGSheetData('Tuesday')" class="button">Tue</button>
+              <button @click="fetchGSheetData('Wednesday')" class="button">Wed</button>
+              <button @click="fetchGSheetData('Thursday')" class="button">Thu</button>
+              <button @click="fetchGSheetData('Friday')" class="button">Fri</button>
+            </div>  
+          </div>
+          <h1 class="title is-2 has-text-white has-text-centered">{{stopsRemaining}} stops today</h1>
           <h2 v-if="newStops && newStops > 0" class="has-text-centered has-text-white subtitle is-4">
             Bring <strong><span class="tag is-danger">{{newStops}}</span></strong> buckets 
             <span v-if="needsYardSign && needsYardSign > 0">&amp; <strong><span class="tag is-danger">{{needsYardSign}}</span></strong> signs</span>
@@ -180,7 +189,7 @@
       </div>
       <div id="map"></div>
     </div>
-    <script src="app.js"></script>
+    <script src="weekday.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
 
