@@ -150,8 +150,8 @@
             let completed = this.TODAY.toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
             if ( 
-              ( (isBiWeekly && isCorrectWeek) || !isBiWeekly ) 
-              && !completed && !skip && isActive && !isInPilot && stop.Latitude && stop.Longitude 
+              // ( (isBiWeekly && isCorrectWeek) || !isBiWeekly ) && 
+              !completed && !skip && isActive && !isInPilot && stop.Latitude && stop.Longitude 
             ) {
               return true;
             } else {

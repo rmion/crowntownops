@@ -134,6 +134,7 @@
             <article class="panel has-background-white">
               <p class="panel-heading">
                   <span v-if="currentStop['Recent Pick-up'] == ''" class="tag is-danger">NEW</span>
+                  <span v-if="currentStop['Bi-Weekly'] == 'Y'" class="tag is-warning">Bi-Weekly</span>
                   <span v-else-if="currentStop.completed" class="tag is-primary">SAVED</span>
                   &nbsp;{{currentStop.Name}}
               </p>
