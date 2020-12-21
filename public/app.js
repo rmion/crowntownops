@@ -185,7 +185,7 @@
               }      
             })
       },
-      flagAddress() {
+      flagMissedBin() {
         let username = 'l79dssqs';
         let password = 'cuirv5acqfj6zspxw5c6';
         let headers = new Headers();
@@ -198,11 +198,11 @@
         fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/Email/${this.currentStop.Email}`, {
                 headers: headers,
                 method: "PATCH",
-                body: JSON.stringify({"data":[{ "Notes": `Flagged address: ${this.currentCoords}` }]})
+                body: JSON.stringify({"data":[{ "Missed-Bin": `${this['Missed-Bin']} ${new Date().toLocaleDateString()};` }]})
             })
             .then(response => response.json())
             .then(data => {
-                this.stops[this.counter].flagged = true;
+                this.stops[this.counter].missed = true;
             })
 
       },
@@ -287,7 +287,7 @@
                   return stop.Latitude == coords.lat && stop.Longitude == coords.lng
                 });
                 match.completed = false;
-                match.flagged = false;
+                match.missed = false;
                 match.isSaving = false;
                 match.weight = 0;
                 return match;
