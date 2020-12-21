@@ -119,18 +119,18 @@
                 <i class="fas fa-check fa-lg"></i>
               </button>
               <button class="button is-danger" :disabled="currentStop.missed" @click="flagMissedBin">
-                <i class="fas fa-flag"></i>
+                <i class="fas fa-times-circle"></i>
               </button>
             </div>
             <article class="panel has-background-white">
               <p class="panel-heading">
-                  <span v-if="currentStop.completed" class="tag is-primary">SAVED</span>
-                  <span v-if="currentStop['Bin-Count'] != ''" class="tag is-danger">{{currentStop['Bin-Count']}} bins</span>
-                  <span v-else class="tag is-secondary">1 bin</span>
-                  <span v-if="currentStop['Recent Pick-up'] == ''" class="tag is-danger">NEW</span>
+                  <span v-if="currentStop.completed" class="tag is-success">SAVED</span>
+                  <span v-if="currentStop['Bin-Count'] != ''" class="tag is-dark">{{currentStop['Bin-Count']}} bins</span>
+                  <span v-else class="tag is-white">1 bin</span>
+                  <span v-if="currentStop['Recent Pick-up'] == ''" class="tag is-primary">NEW</span>
                   <span v-if="currentStop['Recent Pick-up'] == '' && currentStop['Sign'].indexOf('No') == 0" class="tag is-danger">NO SIGN</span>
-                  <span v-if="currentStop.Commercial == 'Y'" class="tag is-secondary">COMM</span>
-                  <span v-if="currentStop['Has-Bin'] == 'Y'">BIN</span>
+                  <span v-if="currentStop.Commercial == 'Y'" class="tag is-info">COMM</span>
+                  <span v-if="currentStop['Has-Bin'] == 'Y'" class="tag is-black">BIN</span>
                   <br />
                   {{currentStop.Name}}
               </p>
@@ -157,7 +157,7 @@
                 </span>
                 {{currentStop.Address}}
               </a>
-              <a class="panel-block">
+              <a class="panel-block" v-if="currentStop['Bin Location']">
                 <span class="panel-icon">
                     <i class="fas fa-trash" aria-hidden="true"></i>
                 </span>
