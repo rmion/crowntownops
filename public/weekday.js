@@ -181,7 +181,7 @@
         headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
         headers.append('Content-Type', 'application/json');
         
-        fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/Address/${this.currentStop.Address.replaceAll(" ", "%20")}`, {
+        fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/Email/${this.currentStop.Email}`, {
                 headers: headers,
                 method: "PATCH",
                 body: JSON.stringify({
@@ -215,7 +215,7 @@
         headers.append('Authorization', 'Basic ' + btoa(username + ":" + password));
         headers.append('Content-Type', 'application/json');
         
-        fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/Address/${this.currentStop.Address.replaceAll(" ", "%20")}`, {
+        fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/Email/${this.currentStop.Email}`, {
                 headers: headers,
                 method: "PATCH",
                 body: JSON.stringify({"data":[{ "Notes": `Flagged address: ${this.currentCoords}` }]})
