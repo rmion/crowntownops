@@ -147,11 +147,12 @@
             let isInPilot = stop["Pilot"] == "Y";
             let isActive = stop["Status"].trim() == "Active";
             let skip = stop["Skip"] == "Y";
-            let completed = this.TODAY.toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
+            // let completed = this.TODAY.toLocaleDateString() == new Date(stop["Recent Pick-up"]).toLocaleDateString();
           
             if ( 
               // ( (isBiWeekly && isCorrectWeek) || !isBiWeekly ) && 
-              !completed && !skip && isActive && !isInPilot && stop.Latitude && stop.Longitude 
+              // !completed && !skip && isActive && !isInPilot && stop.Latitude && stop.Longitude 
+              !skip && isActive && !isInPilot && stop.Latitude && stop.Longitude 
             ) {
               return true;
             } else {
