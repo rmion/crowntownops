@@ -1,11 +1,13 @@
   var app = new Vue({
       el: "#app",
       data: {
-        fetchedSegments: [],
+        fetchedStops: [],
+        currentCoords: [35.27078,-80.74005],
         counter: 0,
         isSecureConnection: window.location.protocol == 'https:',
-        isDoneWithRouteSetup: false,
+        isFinishedFetchingStops: false,
         isRecordUpdating: false,
+        isCalculatingRoute: false,
         filters: {
             "Service day": {
                 active: false,
@@ -168,8 +170,8 @@
             return url;
           },
           mappedSegments() {
-              if (this.fetchedSegments.length > 0) {
-                  return this.fetchedSegments.map(s => {
+              if (this.fetchedStops.length > 0) {
+                  return this.fetchedStops.map(s => {
                     return {
                         "Name": s["Name"],
                         "Address": s["Address"],
@@ -200,7 +202,7 @@
           },
           reInitRoute() {
             this.counter = 0;
-            this.isDoneWithRouteSetup = true;
+            this.isFinishedFetchingStops = true;
           },
           fetchGSheetData() {
             fetch(this.routeURL, {
@@ -208,16 +210,16 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    this.fetchedSegments = data;
+                    this.fetchedStops = data;
                     this.reInitRoute();
                 })
           },
           showNextStop(num) {
-            if (this.counter == this.fetchedSegments.length) {
+            if (this.counter == this.fetchedStops.length) {
                 return;
             } else if (this.counter + num < 0) {
                 return;
-            } else if (this.counter == this.fetchedSegments.length - 1) {
+            } else if (this.counter == this.fetchedStops.length - 1) {
                 this.counter += num;
             } else {
                 this.counter += num;
@@ -229,12 +231,12 @@
                 headers: this.generateHeaders(),
                 method: "PATCH",
                 body: JSON.stringify({
-                "data": [
-                    { 
-                    "Recent Pick-up": new Date().toLocaleString(),
-                    "Notes": this.currentStop.Notes
-                    }
-                ]
+                    "data": [
+                        { 
+                        "Recent Pick-up": new Date().toLocaleString(),
+                        "Notes": this.currentStop.Notes
+                        }
+                    ]
                 })
             })
             .then(response => response.json())
@@ -250,7 +252,13 @@
             fetch(`https://sheetdb.io/api/v1/65s1qbqcffqpa/Email/${this.currentStop.Email}`, {
                     headers: this.generateHeaders(),
                     method: "PATCH",
-                    body: JSON.stringify({"data":[{ "Missed-Bin": `${this['Missed-Bin']} ${new Date().toLocaleDateString()};` }]})
+                    body: JSON.stringify({
+                        "data": [
+                            {
+                                "Missed-Bin": `${this['Missed-Bin']} ${new Date().toLocaleDateString()};` 
+                            }
+                        ]
+                    })
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -260,6 +268,30 @@
                     }
                 })
     
-          },    
+          },
+          optimizeRoute() {
+            const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
+            const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
+            var destinations = "";
+            var counter = 0;
+            this.fetchedStops.forEach(segment => {
+              destinations += `&destination${counter}=geo!${segment.Latitude},${segment.Longitude}`;
+              counter++;
+            })
+            this.apiRequestURI = service + start + destinations;
+            this.isCalculatingRoute = true;
+            fetch(this.apiRequestURI)
+                .then((response) => response.json())
+                .then((data) => {
+                    let reOrderedStops = []
+                    data.results[0].waypoints.forEach(waypoint => {
+                        let matchingStop = this.fetchedStops.find(stop => {
+                            return stop.Latitude == waypoint.lat && stop.Longitude == waypoint.lng
+                        })
+                        typeof matchingStop == 'object' ? reOrderedStops.push(matchingStop) : null;
+                      })
+                    this.fetchedStops = reOrderedStops
+                })
+          }    
     }
   })
