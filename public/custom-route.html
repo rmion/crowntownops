@@ -108,7 +108,7 @@
                 </div>
             </div>  
           </div>
-          <div class="block" v-else>
+          <div class="block" v-else-if="isFinishedFetchingStops && !hasRouteLoaded">
             <button class="button is-link is-fullwidth is-large m-5" 
                     @click="isFinishedFetchingStops = !isFinishedFetchingStops">
                     Re-configure the route
@@ -117,7 +117,7 @@
             <h1 class="mt-5 title is-2 has-text-white has-text-centered">{{mappedSegments.length}} stops</h1>
 
             <div class="container" v-if="mappedSegments.length > 0">
-              <div class="block">
+              <div class="block" v-if="isFinishedFetchingStops && !hasRouteLoaded">
                 <button class="button is-link is-fullwidth is-large m-5" 
                   @click="optimizeRoute"
                   :disabled="isCalculatingRoute">

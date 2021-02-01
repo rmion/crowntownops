@@ -8,6 +8,7 @@
         isFinishedFetchingStops: false,
         isRecordUpdating: false,
         isCalculatingRoute: false,
+        hasRouteLoaded: false,
         filters: {
             "Service day": {
                 active: false,
@@ -291,6 +292,8 @@
                         typeof matchingStop == 'object' ? reOrderedStops.push(matchingStop) : null;
                       })
                     this.fetchedStops = reOrderedStops
+                    this.isCalculatingRoute = false;
+                    this.hasRouteLoaded = true;
                 })
           }    
     }
