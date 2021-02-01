@@ -18,6 +18,13 @@
                     'Friday'
                 ]
             },
+            "Route": {
+                active: false,
+                selected: 'M1',
+                options: [
+                    'M1',
+                ]
+            },
             "Customer type": {
                 active: false,
                 selected: 'Residential',
@@ -108,6 +115,13 @@
                     url += '&Has-Bin=Y'
                 } else {
                     url += '&Has-Bin=!Y'
+                }
+            }
+            if (this.filters["Route"].active) {
+                if (this.filters["Route"].selected == 'M1') {
+                    url += '&Route=M1'
+                } else {
+                    // Account for others
                 }
             }
             if (this.filters["Commercial"].active) {
