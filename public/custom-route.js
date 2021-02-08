@@ -26,6 +26,7 @@
                 selected: 'M1',
                 options: [
                     'M1',
+                    'M2'
                 ]
             },
             "Customer type": {
@@ -124,7 +125,7 @@
                 if (this.filters["Route"].selected == 'M1') {
                     url += '&Route=M1'
                 } else {
-                    // Account for others
+                    url += '&Route=M2'
                 }
             }
             if (this.filters["Commercial"].active) {
