@@ -26,7 +26,9 @@
                 selected: 'M1',
                 options: [
                     'M1',
-                    'M2'
+                    'M2',
+                    'TH1',
+                    'TH2'
                 ]
             },
             "Customer type": {
@@ -122,11 +124,16 @@
                 }
             }
             if (this.filters["Route"].active) {
-                if (this.filters["Route"].selected == 'M1') {
-                    url += '&Route=M1'
-                } else {
-                    url += '&Route=M2'
-                }
+                url += `&Route=${this.filters["Route"].selected}`
+                // if (this.filters["Route"].selected == 'M1') {
+                //     url += '&Route=M1'
+                // } else if (this.filters["Route"].selected == 'M2') {
+                //     url += '&Route=M2'
+                // } else if (this.filters["Route"].selected == 'TH1') {
+                //     url += '&Route=TH1'
+                // } else if (this.filters["Route"].selected == 'TH2') {
+                //     url += '&Route=TH2'
+                // }
             }
             if (this.filters["Commercial"].active) {
                 if (this.filters["Commercial"].selected == 'Yes') {
