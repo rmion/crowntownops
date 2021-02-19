@@ -219,7 +219,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    this.fetchedStops = data;
+                    this.fetchedStops = this.fetchedStops.concat(data);
                     this.reInitRoute();
                 })
           },

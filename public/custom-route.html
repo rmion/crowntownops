@@ -101,7 +101,7 @@
                       <div class="control">
                         <button class="button is-link is-fullwidth is-large" 
                                 @click="fetchGSheetData">
-                                Load these stops
+                                Add these stops
                         </button>
                       </div>
                     </div>         
@@ -109,9 +109,9 @@
             </div>  
           </div>
           <div class="block" v-else>
-            <button v-if="!hasRouteLoaded" class="button is-danger is-fullwidth m-5" 
+            <button v-if="!hasRouteLoaded" class="button is-info is-fullwidth m-5" 
                     @click="isFinishedFetchingStops = !isFinishedFetchingStops">
-                    Re-configure the route
+                    Add more stops to the route
             </button>
             
             <h1 class="mt-5 title is-2 has-text-white has-text-centered">{{mappedSegments.length}} stops</h1>
@@ -157,15 +157,17 @@
                       </button>
                 </div>
                 <div class="block">
-                    <h2>{{currentStop.Name}}</h2>
+                    <textarea v-show="currentStop.Notes.length > 0" 
+                              cols="30" rows="10" 
+                              style="display: block; width: 100%; font-size: 1.3em; padding: 0.5em; margin: 1em 0;">{{currentStop.Notes}}</textarea>
                     <table class="table is-fullwidth has-background-white">
                       <tbody>
                           <tr v-for="(value, key) in currentStop" :key="key" v-show="value.length > 0">
                               <th>{{key}}</th>
-                              <td v-if="key == 'Notes'">
+                              <!-- <td v-if="key == 'Notes'">
                                   <textarea name="" id="" cols="30" rows="10">{{value}}</textarea>
-                              </td>
-                              <td v-else>{{value}}</td>
+                              </td> -->
+                              <td>{{value}}</td>
                           </tr>
                       </tbody>
                     </table>
