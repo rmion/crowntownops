@@ -118,10 +118,16 @@
 
             <div class="container" v-if="mappedSegments.length > 0">
               <div class="block" v-if="isFinishedFetchingStops && !hasRouteLoaded">
+                <h3 class="title is-4 has-text-white has-text-centered">Calculate route...</h3>
                 <button class="button is-success is-fullwidth is-large m-5" 
-                  @click="optimizeRoute"
+                  @click="optimizeRoute(false)"
                   :disabled="isCalculatingRoute">
-                  Calculate route
+                  {{ isCalculatingRoute ? 'Loading route...' : 'From the warehouse' }}
+                </button>
+                <button class="button is-link is-fullwidth is-medium m-5" 
+                  @click="optimizeRoute(true)"
+                  :disabled="isCalculatingRoute">
+                  {{ isCalculatingRoute ? 'Loading route...' : 'From my location' }}
                 </button>
               </div>
               <div class="block" style="display: flex;">

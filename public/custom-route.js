@@ -125,15 +125,6 @@
             }
             if (this.filters["Route"].active) {
                 url += `&Route=${this.filters["Route"].selected}`
-                // if (this.filters["Route"].selected == 'M1') {
-                //     url += '&Route=M1'
-                // } else if (this.filters["Route"].selected == 'M2') {
-                //     url += '&Route=M2'
-                // } else if (this.filters["Route"].selected == 'TH1') {
-                //     url += '&Route=TH1'
-                // } else if (this.filters["Route"].selected == 'TH2') {
-                //     url += '&Route=TH2'
-                // }
             }
             if (this.filters["Commercial"].active) {
                 if (this.filters["Commercial"].selected == 'Yes') {
@@ -190,6 +181,7 @@
                         "Bi-Weekly": s["Bi-Weekly"],
                         "Notes": s["Notes"],
                         "Service-Day": s["Service-Day"],
+                        "Route": s["Route"],
                         "Bin-Count": s["Bin-Count"],
                         "Missed-Bin": s["Missed-Bin"],
                         "Commercial": s["Commercial"],
@@ -264,7 +256,7 @@
                     body: JSON.stringify({
                         "data": [
                             {
-                                "Missed-Bin": `${this['Missed-Bin']} ${new Date().toLocaleDateString()};` 
+                                "Missed-Bin": `${this.curretStop['Missed-Bin']} ${new Date().toLocaleDateString()};` 
                             }
                         ]
                     })
@@ -278,7 +270,22 @@
                 })
     
           },
-          optimizeRoute() {
+          setLocation(bool) {
+            if (bool) {
+              if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(this.updatePosition);
+              }  
+            } else {
+              this.currentCoords = [35.27078,-80.74005];
+            }
+          },
+          updatePosition(position) {
+            if (position) {
+              this.currentCoords = [position.coords.latitude, position.coords.longitude]
+            }
+          },
+          optimizeRoute(bool) {
+            this.setLocation(bool)
             const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
             const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
             var destinations = "";
