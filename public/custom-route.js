@@ -27,8 +27,12 @@
                 options: [
                     'M1',
                     'M2',
+                    'T1',
+                    'T2',
                     'TH1',
-                    'TH2'
+                    'TH2',
+                    'F1',
+                    'F2'
                 ]
             },
             "Customer type": {
