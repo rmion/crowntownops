@@ -191,7 +191,10 @@
                         "Bin-Count": s["Bin-Count"],
                         "Missed-Bin": s["Missed-Bin"],
                         "Commercial": s["Commercial"],
-                        "Has-Bin": s["Has-Bin"]
+                        "Has-Bin": s["Has-Bin"],
+                        "Latitude": s["Latitude"],
+                        "Longitude": s["Longitude"],
+                        "Email": s["Email"]
                     }
                   })
               } else return [];
