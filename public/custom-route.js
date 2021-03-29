@@ -116,6 +116,20 @@
           currentStop() {
               return this.mappedSegments.length > 0 ? this.mappedSegments[this.counter] : null;
           },
+          newStops() {
+            if (this.mappedSegments.length) {
+              return this.mappedSegments.filter((row) => row["Recent Pick-up"] == "").length;
+            } else {
+              return null;
+            }
+          },
+          needsYardSign() {
+            if (this.mappedSegments.length) {
+              return this.mappedSegments.filter((row) => row["Recent Pick-up"] == "" && row["Yard Sign"].indexOf("Yes") == 0).length;
+            } else {
+              return null;
+            }
+          },    
           routeURL() {
             let url = 'https://sheetdb.io/api/v1/65s1qbqcffqpa/search?';
             url += `Service-Day=${this.filters["Service day"].selected}&Skip=!Y&Status=Active`;
@@ -194,7 +208,8 @@
                         "Has-Bin": s["Has-Bin"],
                         "Latitude": s["Latitude"],
                         "Longitude": s["Longitude"],
-                        "Email": s["Email"]
+                        "Email": s["Email"],
+                        "Yard Sign": s["Sign"]
                     }
                   })
               } else return [];
@@ -254,6 +269,7 @@
                 if (data.updated == 1) {
                     this.isRecordUpdating = false;
                     this.currentStop["Recent Pick-up"] = new Date().toLocaleString()
+                    this.fetchedStops.splice(this.counter, 1)
                 }
             })
         },

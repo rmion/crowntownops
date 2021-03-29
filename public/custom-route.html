@@ -115,7 +115,10 @@
             </button>
             
             <h1 class="mt-5 title is-2 has-text-white has-text-centered">{{mappedSegments.length}} stops</h1>
-
+            <h2 v-if="newStops && newStops > 0" class="has-text-centered has-text-white subtitle is-4">
+              Bring <strong><span class="tag is-danger">{{newStops}}</span></strong> buckets 
+              <span v-if="needsYardSign && needsYardSign > 0">&amp; <strong><span class="tag is-danger">{{needsYardSign}}</span></strong> signs</span>
+            </h2>  
             <div class="container" v-if="mappedSegments.length > 0">
               <div class="block" v-if="isFinishedFetchingStops && !hasRouteLoaded">
                 <h3 class="title is-4 has-text-white has-text-centered">Start route from...</h3>
