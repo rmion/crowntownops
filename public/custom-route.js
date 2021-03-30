@@ -78,7 +78,7 @@
                     'No'
                 ]
             },
-            "Completed": {
+            "Completed yesterday": {
                 active: false,
                 selected: 'No',
                 options: [
@@ -106,8 +106,7 @@
                 active: false,
                 selected: '1',
                 options: [
-                    '1',
-                    '2+'
+                    '1'
                 ]
             },
         }
@@ -188,8 +187,12 @@
                     url += `&Recent%20Pick-up=''`
                 }
             }
-            if (this.filters["Completed"].active) {
-                url += `&Recent%20Pick-up=${this.filters["Completed"].selected == 'Yes' ? (new Date().toLocaleDateString() + '*') : '*'}`
+            if (this.filters["Completed yesterday"].active) {
+                if (this.filters["Completed yesterday"].selected == "Yes") {
+                    url += `&Recent%20Pick-up=${new Date(moment().subtract(1, 'days')._d).toLocaleDateString() + '*'}`
+                } else {
+                    url += `&Recent%20Pick-up=!${new Date(moment().subtract(1, 'days')._d).toLocaleDateString() + '*'}`
+                }
             }
             if (this.filters["Bin count"].active) {
                 url += `&Bin-Count=${this.filters["Bin count"].selected == '1' ? '' : '*'}`
