@@ -123,6 +123,13 @@
               return null;
             }
           },
+          needsBucket() {
+            if (this.mappedSegments.length) {
+              return this.mappedSegments.filter((row) => row["Recent Pick-up"] == "" && row["Has Bin"] == "").length;
+            } else {
+              return null;
+            }
+          },
           needsYardSign() {
             if (this.mappedSegments.length) {
               return this.mappedSegments.filter((row) => row["Recent Pick-up"] == "" && row["Yard Sign"].indexOf("Yes") == 0).length;
@@ -200,12 +207,12 @@
                         "Bin Location": s["Bin Location"],
                         "Bi-Weekly": s["Bi-Weekly"],
                         "Notes": s["Notes"],
-                        "Service-Day": s["Service-Day"],
+                        "Service Day": s["Service-Day"],
                         "Route": s["Route"],
-                        "Bin-Count": s["Bin-Count"],
-                        "Missed-Bin": s["Missed-Bin"],
+                        "Bin Count": s["Bin-Count"],
+                        "Missed Bin": s["Missed-Bin"],
                         "Commercial": s["Commercial"],
-                        "Has-Bin": s["Has-Bin"],
+                        "Has Bin": s["Has-Bin"],
                         "Latitude": s["Latitude"],
                         "Longitude": s["Longitude"],
                         "Email": s["Email"],
@@ -235,7 +242,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    this.fetchedStops = this.fetchedStops.concat(data);
+                    this.fetchedStops = _.uniqBy(this.fetchedStops.concat(data), 'Email');
                     this.reInitRoute();
                 })
           },
