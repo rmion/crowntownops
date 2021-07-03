@@ -166,6 +166,11 @@
                           <i class="fas fa-times-circle"></i>
                         </span>
                     </button>
+                    <a :href="'sms://+1' + currentStop.Phone.replaceAll('-', '')" class="button is-white is-large">
+                      <span class="icon">
+                        <i class="fas fa-sms fa-lg"></i>
+                      </span>
+                    </a>
                       <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + currentStop.Latitude + ',' + currentStop.Longitude" class="button is-link is-large">
                         <span class="icon">
                             <i class="fas fa-map-marker-alt fa-lg"></i>

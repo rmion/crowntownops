@@ -2,7 +2,7 @@
       el: "#app",
       data: {
         fetchedStops: [],
-        currentCoords: [35.27078,-80.74005],
+        currentCoords: [35.226293,-80.823527],
         counter: 0,
         isSecureConnection: window.location.protocol == 'https:',
         isFinishedFetchingStops: false,
@@ -204,6 +204,7 @@
                   return this.fetchedStops.map(s => {
                     return {
                         "Name": s["Name"],
+                        "Phone": s["Phone"],
                         "Address": s["Address"],
                         "Recent Pick-up": s["Recent Pick-up"],
                         "How to Access": s["How to Access"],
@@ -321,12 +322,12 @@
           },
           optimizeRoute(bool) {
             this.setLocation(bool)
-            const service = `https://wse.api.here.com/2/findsequence.json?app_id=TQz2PVEYCL8W49T7zZKO&app_code=rcFSeTs5AqMlYuPCX8D4Jg&mode=fastest;car;`;
-            const start = `&start=geo!${this.currentCoords[0]},${this.currentCoords[1]}`
+            const service = `https://wse.ls.hereapi.com/2/findsequence.json?&apiKey=nXD3LCdyfFtuprcsOT2oWnekCTAeQH5CPeKwt9bFu44&mode=fastest;car;`;
+            const start = `&start=${this.currentCoords[0]},${this.currentCoords[1]}`
             var destinations = "";
             var counter = 0;
             this.fetchedStops.forEach(segment => {
-              destinations += `&destination${counter}=geo!${segment.Latitude},${segment.Longitude}`;
+              destinations += `&destination${counter}=${segment.Latitude},${segment.Longitude}`;
               counter++;
             })
             this.apiRequestURI = service + start + destinations;
