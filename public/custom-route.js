@@ -324,13 +324,16 @@
             this.setLocation(bool)
             const service = `https://wse.ls.hereapi.com/2/findsequence.json?&apiKey=nXD3LCdyfFtuprcsOT2oWnekCTAeQH5CPeKwt9bFu44&mode=fastest;car;`;
             const start = `&start=${this.currentCoords[0]},${this.currentCoords[1]}`
+            const end = `&end=35.226293,-80.823527`
             var destinations = "";
             var counter = 0;
             this.fetchedStops.forEach(segment => {
-              destinations += `&destination${counter}=${segment.Latitude},${segment.Longitude}`;
-              counter++;
+                if (segment.Latitude != "" && segment.Longitude != "") {
+                    destinations += `&destination${counter}=${segment.Latitude},${segment.Longitude}`;
+                    counter++;
+                }
             })
-            this.apiRequestURI = service + start + destinations;
+            this.apiRequestURI = service + start + destinations + end;
             this.isCalculatingRoute = true;
             fetch(this.apiRequestURI)
                 .then((response) => response.json())
